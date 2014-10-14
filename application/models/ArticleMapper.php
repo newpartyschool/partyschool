@@ -47,12 +47,29 @@ class Application_Model_ArticleMapper
 			$select->limit($limit);
 		}
 
-		$arr = $this->db->fetchAll($select);
+		$arr = $this->db->fetchAll($select)->toarray();
 
-		if ($arr->count() > 0) {
+		if (count($arr) > 0) {
 			return $arr;
 		}else{
 			return null;
 		}
+	}
+
+	public function addArticles($title,$content,$publisedtime,$imgurl)
+	{
+		$arr = array(
+						 'title'=>$title,
+						 //'ansA'=>md5($Password),
+						 'content'	=>$content,
+						 'publisedtime'=>$publisedtime,
+						 'imgurl'	=>$imgurl
+
+						);
+			$ab=$this->db->getAdapter();
+			$res = $this->db->insert($arr,true);
+			
+			return $res;
+		
 	}
 }

@@ -28,7 +28,8 @@ body{
 	-webkit-border-radius: 29px;
 	-moz-border-radius: 29px;
 	padding: 2px;
-	margin-left: 336px;
+	
+	float: right;
 }
 .main-content form .all-del button{
 	margin-left: 89%;

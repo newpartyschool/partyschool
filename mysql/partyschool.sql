@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 3.1.5
+-- version 3.4.10.1
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2014 年 09 月 29 日 18:02
--- 服务器版本: 5.0.77
--- PHP 版本: 5.3.8
+-- 生成日期: 2014 年 10 月 12 日 14:19
+-- 服务器版本: 5.0.51
+-- PHP 版本: 5.3.10
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -29,13 +30,13 @@ CREATE TABLE IF NOT EXISTS `article` (
   `id` int(10) NOT NULL COMMENT '主键',
   `title` varchar(80) collate utf8_unicode_ci NOT NULL COMMENT '文章标题',
   `content` text collate utf8_unicode_ci NOT NULL COMMENT '内容',
-  `publisedtime` int(11) NOT NULL COMMENT '发布文章时间',
+  `publisedtime` int(10) NOT NULL COMMENT '发布文章时间',
   `imgurl` text collate utf8_unicode_ci NOT NULL COMMENT '文章图片',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='学习资讯文章';
 
 --
--- 导出表中的数据 `article`
+-- 转存表中的数据 `article`
 --
 
 INSERT INTO `article` (`id`, `title`, `content`, `publisedtime`, `imgurl`) VALUES
@@ -62,15 +63,8 @@ CREATE TABLE IF NOT EXISTS `class` (
   `teachername` varchar(5) collate utf8_unicode_ci NOT NULL COMMENT '班主任名',
   `depid` tinyint(2) NOT NULL COMMENT '外键（连接学院机构）',
   `campus` varchar(10) collate utf8_unicode_ci NOT NULL COMMENT '校区',
-  PRIMARY KEY  (`id`),
-  KEY `periodsnum` (`periodsnum`),
-  KEY `depid` (`depid`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='班级';
-
---
--- 导出表中的数据 `class`
---
-
 
 -- --------------------------------------------------------
 
@@ -83,11 +77,6 @@ CREATE TABLE IF NOT EXISTS `course` (
   `coursename` varchar(10) collate utf8_unicode_ci NOT NULL COMMENT '课程名字',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='课程' AUTO_INCREMENT=1 ;
-
---
--- 导出表中的数据 `course`
---
-
 
 -- --------------------------------------------------------
 
@@ -102,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `department` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='学院（机构）' AUTO_INCREMENT=3 ;
 
 --
--- 导出表中的数据 `department`
+-- 转存表中的数据 `department`
 --
 
 INSERT INTO `department` (`depid`, `depname`) VALUES
@@ -129,11 +118,6 @@ CREATE TABLE IF NOT EXISTS `partystu` (
   PRIMARY KEY  (`stno`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='数据库学员表' AUTO_INCREMENT=1 ;
 
---
--- 导出表中的数据 `partystu`
---
-
-
 -- --------------------------------------------------------
 
 --
@@ -152,11 +136,6 @@ CREATE TABLE IF NOT EXISTS `periodset` (
   PRIMARY KEY  (`periodnum`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='基本设置参数表' AUTO_INCREMENT=1 ;
 
---
--- 导出表中的数据 `periodset`
---
-
-
 -- --------------------------------------------------------
 
 --
@@ -172,16 +151,29 @@ CREATE TABLE IF NOT EXISTS `question` (
   `ansD` varchar(60) collate utf8_unicode_ci NOT NULL COMMENT '答案D',
   `ansY` varchar(5) collate utf8_unicode_ci NOT NULL COMMENT '答案Y',
   PRIMARY KEY  (`qeid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='题目' AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='题目' AUTO_INCREMENT=19 ;
 
 --
--- 导出表中的数据 `question`
+-- 转存表中的数据 `question`
 --
 
 INSERT INTO `question` (`qeid`, `qetitle`, `ansA`, `ansB`, `ansC`, `ansD`, `ansY`) VALUES
-(1, '1、预备党员的预备期为（）', '（A）半年', '（B）一年', '（C） 一年半', '（D）两年', '（B）'),
-(2, '2、党章规定，预备党员的预备期最长为（）', '（A）一年', '（B）一年半', '（C）二年', '（D）三年', '（C）'),
-(3, '3、马克思主义具有（）的理论品质', '（A）解放思想', '（B）实事求是', '（C） 与时俱进', '（D）持续稳定', '（C）');
+(3, '马克思主义具有（）的理论品质', '（A）解放思想', '（B）实事求是', '（C） 与时俱进', '（D）持续稳定', '（C）'),
+(4, '中国共产党是中国工人阶级的先锋队，同时是中国人民和（  ）的先锋队。', '（A）全体人民', '（B）中华民族', '（C）社会主义 ', '（D）各族人民', '（B）'),
+(5, '党的最高理想和（）是实现共产主义。', '（A）长远目标', '（B）伟大目标', '（C）最终目标', '（D）最大目标', '（C）'),
+(6, '中国共产党以马列主义、毛泽东思想、邓小平理论和“三个代表”重要思想作为自己的（）。', '（A）行动指南', '（B）行动纲领', '（C）行动指导', '（D）行动动力', '（A）'),
+(7, '马克思列宁主义揭示了人类社会发展的历史规律，它的基本原理是正确的，具有强大的（）。', '（A）生命力        ', '（B）战斗力', '（C）凝聚力  ', '（D）推动力', '（A）'),
+(8, '社会主义制度的（）和完善是一个长期的历史过程。', '（A）建立 ', '（B）改革', '（C）完善 ', '（D）发展', '（D）'),
+(9, '社会主义（）需要上百年时间。', '（A）初级阶段', '（B）发展阶段', '（C）建设阶段', '（D）奋斗阶段', '（A）'),
+(10, '（）的提出是党的十六届三中全会。', '（A）和谐社会', '（B）党的执政能力建设', '（C）新农村建设', '（D）科学发展观', '（D）'),
+(11, '党的十七届三中全会讨论的是（）问题。', '（A）推进农村改革发展', '（B）推进城市改革发展', '（C）推进社会改革发展 ', '（D）推进高校改革发展', '（A）'),
+(12, '中国共产党的根本（）是全心全意为人民服务。', '（A）路线', '（B）思想', '（C）方法', '（D）宗旨', '（D）'),
+(13, '中国共产党的根本（）原则是民主集中制。', '（A）组织', '（B）思想', '（C）理论 ', '（D）作风', '（A）'),
+(14, '中国共产党永远是（）的普通一员。', '（A）工人阶级', '（B）中国人民', '（C）劳动人民', '（D）中华民族', '（C）'),
+(15, '社会和谐是中国特色社会主义的（）属性。    ', '（A）重要', '（B）基本', '（C）本质', '（D）关键', '（C）'),
+(16, '党除了（）和最广大人民群众的利益，没有自己特殊利益。', '（A）工人阶级', '（B）农民阶级 ', '（C）社会阶层', '（D）知识分子', '（A）'),
+(17, '发展党员必须经过党的支部 ，坚持（）的原则。', '（A）少数服从多数', '（B）个别吸收', '（C）集体讨论', '（D）举手表决', '（B）'),
+(18, '中国共产党的党性是工人阶级的（）的最高表现。', '（A）党性', '（B）先进性', '（C）革命性', '（D）阶级性', '（D）');
 
 -- --------------------------------------------------------
 
@@ -193,15 +185,8 @@ CREATE TABLE IF NOT EXISTS `score` (
   `stno` varchar(10) collate utf8_unicode_ci NOT NULL,
   `courseid` tinyint(1) NOT NULL,
   `testscore` tinyint(3) NOT NULL COMMENT '前台提交的测试成绩',
-  `totalscore` tinyint(3) NOT NULL COMMENT '管理员提交的成绩',
-  PRIMARY KEY  (`stno`,`courseid`),
-  KEY `courseid` (`courseid`)
+  `totalscore` tinyint(3) NOT NULL COMMENT '管理员提交的成绩'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='成绩';
-
---
--- 导出表中的数据 `score`
---
-
 
 -- --------------------------------------------------------
 
@@ -213,15 +198,8 @@ CREATE TABLE IF NOT EXISTS `selectedquestion` (
   `id` smallint(6) NOT NULL auto_increment,
   `periodsnum` tinyint(3) NOT NULL COMMENT '外键（期数）',
   `qeid` smallint(6) NOT NULL COMMENT '外键（题库id）',
-  PRIMARY KEY  (`id`),
-  KEY `periodsnum` (`periodsnum`),
-  KEY `qeid` (`qeid`)
+  PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='抽取的题目' AUTO_INCREMENT=1 ;
-
---
--- 导出表中的数据 `selectedquestion`
---
-
 
 -- --------------------------------------------------------
 
@@ -233,11 +211,6 @@ CREATE TABLE IF NOT EXISTS `stuclass` (
   `stno` bigint(10) NOT NULL,
   `classid` smallint(6) NOT NULL COMMENT '党校班级id'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='班级和学生联系表';
-
---
--- 导出表中的数据 `stuclass`
---
-
 
 -- --------------------------------------------------------
 
@@ -254,11 +227,6 @@ CREATE TABLE IF NOT EXISTS `student` (
   PRIMARY KEY  (`stno`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='学员' AUTO_INCREMENT=1 ;
 
---
--- 导出表中的数据 `student`
---
-
-
 -- --------------------------------------------------------
 
 --
@@ -271,15 +239,18 @@ CREATE TABLE IF NOT EXISTS `user` (
   `realname` varchar(20) collate utf8_unicode_ci NOT NULL COMMENT '真实名',
   `pw` varchar(20) collate utf8_unicode_ci NOT NULL COMMENT '密码',
   `depid` tinyint(2) NOT NULL COMMENT '外键（学院）',
-  PRIMARY KEY  (`userid`),
-  KEY `depid` (`depid`)
+  PRIMARY KEY  (`userid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='用户' AUTO_INCREMENT=7 ;
 
 --
--- 导出表中的数据 `user`
+-- 转存表中的数据 `user`
 --
 
 INSERT INTO `user` (`userid`, `username`, `realname`, `pw`, `depid`) VALUES
 (6, 'sqliang', '梁士全', '123', 2),
 (4, 'houjingrui', '侯景瑞', '123', 1),
 (5, 'ycy', '喻彩云', '123', 2);
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

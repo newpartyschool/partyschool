@@ -1,4 +1,6 @@
+
 <?php
+
 class AdminController extends Zend_Controller_Action
 {
 	 public function init()
@@ -54,9 +56,16 @@ class AdminController extends Zend_Controller_Action
         $questionsetMapper = new Application_Model_QuestionsetMapper();
         $where = array();
         $order = null;
-        $limit = 3;
+        $limit = 10;
+        $num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
         $arrList = $questionsetMapper->findQuestionFenYe($where,$order,$limit);
-        $this->view->arrList = $arrList;
+
+        $paginator_choose = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+        $paginator_choose->setItemCountPerPage($num); //设置每一页显示的文章数目
+        $paginator_choose->setCurrentPageNumber($page); //设置第一页显示
+        $paginator_choose->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+        $this->view->paginator_choose = $paginator_choose;
+        //$this->view->arrList = $arrList;
 
 	 }
 	 /**
@@ -66,9 +75,15 @@ class AdminController extends Zend_Controller_Action
 	 public function queupdateAction()
 	 {
 	 	$queupdateMapper = new Application_Model_QueupdateMapper();
+	 	$num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
         $order = "";
         $arrList = $queupdateMapper->findAllQueupdate($order);
-        $this->view->arrList = $arrList;
+        $paginator_all = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+        $paginator_all->setItemCountPerPage($num); //设置每一页显示的文章数目
+        $paginator_all->setCurrentPageNumber($page); //设置第一页显示
+        $paginator_all->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+        $this->view->paginator_all = $paginator_all;
+        //$this->view->arrList = $arrList;
 
 	 }
 
@@ -83,12 +98,31 @@ class AdminController extends Zend_Controller_Action
 		$QueupdateMapper = new Application_Model_QueupdateMapper();
 		$info = $QueupdateMapper->deleteQuestion($qeid);
 		$this->view->info = $info;
-/*		$string = "<meta http-equiv='content-type' content='text/html; charset=UTF-8'><script language=\"JavaScript\">alert(\"".$info."\");</script>";
-				echo $string;*/
-
+		
 		$this->_redirect("/admin/queupdate");//admin?info=$info
 
 	}
+
+
+	 	/**
+	* 查找题目
+	*/
+	public function findquestionAction()
+	{
+
+		$qeid=$this->getRequest()->getParam('qeid');
+		//$qeid=7;
+		$QueupdateMapper = new Application_Model_QueupdateMapper();
+		$info = $QueupdateMapper->findQueupdateById($qeid);
+		$info = $info[0];
+		
+		echo(json_encode($info));
+
+		exit();
+
+
+	}
+
 
 	public function xxAction()
 	{
@@ -108,9 +142,25 @@ class AdminController extends Zend_Controller_Action
 		echo $result;
 		exit();
 
-		//return $backStr;
 
-		//$this->view->result = $result;
+	}
+
+		public function editquestionAction()
+	{
+
+		$qeid = $_POST['qeid'];
+		$qetitle = $_POST['timu'];
+		$ansA = $_POST['ansA'];
+		$ansB = $_POST['ansB'];
+		$ansC = $_POST['ansC'];
+		$ansD = $_POST['ansD'];
+		$ansY = $_POST['rightAns'];
+		$queupdateMapper = new Application_Model_QueupdateMapper();
+		$result = $queupdateMapper->editQuestion($qeid,$qetitle,$ansA,$ansB,$ansC,$ansD,$ansY);
+		echo $result;
+		exit();
+
+
 
 	}
 
@@ -125,10 +175,37 @@ class AdminController extends Zend_Controller_Action
 	 public function learninfoAction()
 	 {
 
+       $articleMapper = new Application_Model_ArticleMapper();
+       $order = "publisedtime DESC";
+       $where = array();
+       $limit = 8;
+       $arrList = $articleMapper->getArticles($where,$order,$limit);
+      // $this->view->arrList = $arrList;
+       $num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
+       $paginator_learninfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+       $paginator_learninfo->setItemCountPerPage($num); //设置每一页显示的文章数目
+       $paginator_learninfo->setCurrentPageNumber($page); //设置第一页显示
+       $paginator_learninfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+       $this->view->paginator_learninfo = $paginator_learninfo;
+
+	 	
+
 	 }
 
 	 public function addzxAction()
 	 {
+/*	 	$title = $_POST['wz-title'];
+		$content = $_POST['article-content'];
+		$publisedtime="2014-10-5";
+		$imgurl="";
+
+
+		$articleMapper = new Application_Model_ArticleMapper();
+		$result = $articleMapper->addArticles($title,$content,$publisedtime,$imgurl);
+
+
+		return $result;*/
+
 
 	 }
 

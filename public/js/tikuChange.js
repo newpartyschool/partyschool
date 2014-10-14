@@ -30,10 +30,9 @@ $('#addTimu').bind('click',function(){
 					rightAns:rightAns
 				},
 				success:function(msg){
-					//alert(msg);
+
 					if(msg>0)alert('添加题目成功');
 
-					//console.log(msg);
 				}
 			});
 		}

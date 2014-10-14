@@ -28,12 +28,13 @@ class Application_Model_QueupdateMapper
 	{
 		$ab = $this->db->getAdapter();
 		$where = $ab->quoteInto('qeid =?',$qeid);
-		$res = $this->db->fetchRow($where);
+		$res = $this->db->fetchAll($where)->toArray();
 		if ($res) {
 			return $res;
 		}else{
 			return null;
 		}
+
 	}
 
 /*	public function delQuestionById($qeid=null)
@@ -76,20 +77,6 @@ class Application_Model_QueupdateMapper
 			return $info;
 		}
 
-/*		public function addQuestion($quesData = array())
-		{
-			$row = $this->db->createRow();
-			if (count($quesData) > 0) {
-				foreach ($quesData as $key => $value) {
-					$row->$key = $value;
-				}
-				$row->save();
-				return '该问题添加成功';
-			}else{
-				return null;
-			}
-		}
-*/
 
 /**
 		* 添加题目
@@ -109,6 +96,31 @@ class Application_Model_QueupdateMapper
 						);
 			$ab=$this->db->getAdapter();
 			$res = $this->db->insert($arr,true);
+			
+			return $res;
+		}
+
+
+/**
+		* 更新题目
+		*/
+		public function editQuestion($qeid,$qetitle,$ansA,$ansB,$ansC,$ansD,$ansY)
+		{
+
+			$arr = array(
+
+						 'qetitle'=>$qetitle,
+						 //'ansA'=>md5($Password),
+						 'ansA'	=>$ansA,
+						 'ansB'=>$ansB,
+						 'ansC'	=>$ansC,
+						 'ansD'=>$ansD,
+						 'ansY'=>$ansY
+
+						);
+			$ab=$this->db->getAdapter();
+			$where=$ab->quoteInto('qeid=?',$qeid);
+			$res = $this->db->update($set=$arr,$where);
 			
 			return $res;
 		}

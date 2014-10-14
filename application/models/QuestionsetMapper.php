@@ -59,9 +59,9 @@ class Application_Model_QuestionsetMapper
 			$select->limit($limit);
 		}
 
-		$arr = $this->db->fetchAll($select);
+		$arr = $this->db->fetchAll($select)->toArray();
 
-		if ($arr->count() > 0) {
+		if (count($arr) > 0) {
 			return $arr;
 		}else{
 			return null;

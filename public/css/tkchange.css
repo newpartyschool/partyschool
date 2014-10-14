@@ -56,3 +56,31 @@ body{
 	border-radius: 10px;
 	box-shadow: 1px 33px 10px rgba(2,37,69,.6);
 }
+
+
+/*************** Pagination ***************/
+
+#main-content .pagination {
+                text-align: right;
+                padding: 20px 0 5px 0;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 10px;
+                }
+.pagination a {
+                margin: 0 5px 0 0;
+                padding: 3px 6px;
+                }
+
+.pagination a.number {
+				border: 1px solid #ddd;
+                }
+
+.pagination a.current {
+                background: #469400 url('/images/admin/bg-button-green.gif') top left repeat-x !important;
+                border-color: #459300 !important;
+                color: #fff !important;
+                }
+				
+.pagination a.current:hover {
+				text-decoration: underline;
+                }

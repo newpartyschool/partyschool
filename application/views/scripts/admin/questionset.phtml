@@ -36,7 +36,7 @@
               <li><a href="/admin/xyinfo">学员信息</a></li>
               <li><a href="/admin/questionset"  style="color: #FFF;">题目设置</a></li>
               <li><a href="/admin/queupdate">修改题库</a></li>
-              <li><a href="/admin/xyinfo">学习资讯</a></li>
+              <li><a href="/admin/learninfo">学习资讯</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <li><a href="#"><span style="color: #FFF">欢迎您，  超级管理员</span>  退出</a></li>
@@ -77,8 +77,8 @@
       </div>
       <h3>抽取题目如下：</h3>
         <?php
-          if ($this->arrList) {
-            foreach ($this->arrList as $questionsetList) {
+          if ($this->paginator_choose) {
+            foreach ($this->paginator_choose as $questionsetList) {
               $qeid = $questionsetList['qeid'];          
               $qetitle = $questionsetList['qetitle'];
               $ansA = $questionsetList['ansA'];
@@ -93,8 +93,27 @@
           }
         ?>
 
-        
+      <tbody>
 
+        <?php
+          global $arrList;
+          $paginator_choose=$this->paginator_choose;
+
+        ?>
+      
+      </tbody>
+
+      <div class="footer-fenye">
+          <ul class="pager">
+            <?php echo $this->paginationControl($this->paginator_choose,
+                'Elastic',//页码样式 
+                'admin/pagination_control.phtml'//页码模板
+                );
+              ?>
+
+          </ul>
+        </div>
+      </div>
           
             
         <!-- 题目容器 -->
@@ -110,14 +129,6 @@
         </div> -->
 
 
-        <div class="footer-fenye">
-          <ul class="pager">
-            <li><a href="#">上一页</a></li>
-            <li><a href="#">下一页</a></li>
-          </ul>
-        </div>
-      </div>
-      
 
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

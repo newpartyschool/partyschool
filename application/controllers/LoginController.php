@@ -40,7 +40,7 @@ class LoginController extends Zend_Controller_Action
         	$session->userid = $arr[0]['userid'];
         	$session->username = $arr[0]['username'];
         	$session->realname = $arr[0]['realname'];
-        	$session->depid = $arr[0]['depid'];
+        	$session->depid = $arr[0]['department'];
         	$session->depname = $depname;
 
         	if($this->getRequest()->getParam('remember') == 'on'){
@@ -48,13 +48,7 @@ class LoginController extends Zend_Controller_Action
         	}else{
         		$session->setExpirationSeconds(1800);
         	}
-            if ($session->depid == 1) {
-                $this->_redirect('/admin/baseset');
-            }
-            else{
-                $this->_redirect('/admin/dxzj');
-
-            }
+        	$this->_redirect('/admin/dxzj');
         }else{
         	$string = "<meta http-equiv='content-type' content='text/html; charset=UTF-8'><script language=\"JavaScript\">alert(\"未授权用户！\");location.href = \"/login\";</script>";
             echo $string;

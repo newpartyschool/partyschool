@@ -16,7 +16,7 @@ class Application_Model_UserMapper
 	{
 		$ab = $this->db->getAdapter();
 		$where = $ab->quoteInto('username = ?',$username)
-				 .$ab->quoteInto('AND pw = ?',md5($pw));
+				 .$ab->quoteInto('AND pw = ?',$pw);
 		$arr = $this->db->fetchAll($where)->toArray();
 		// if(count($arr) > 0){
 		// 	return $arr;
@@ -82,7 +82,7 @@ class Application_Model_UserMapper
 	{
 		$arr = array('username' => $username,
 		 			 'realname' => $realname,
-		 			 'pw' => md5($pw),
+		 			 'pw' => $pw,
 		 			 'depid' => $depid);
 		$res = $this->db->insert($arr);
 		return $res;
@@ -115,7 +115,7 @@ class Application_Model_UserMapper
 	public function modifyUserPwd($userid,$pw)
 	{
 		// $arr = array('Password'=>md5($Password),);
-		$arr = array('pw' => md5($pw), );
+		$arr = array('pw' => $pw, );
 		$ab=$this->db->getAdapter();
 		$where=$ab->quoteInto('userid=?',$userid);
 		$res=$this->db->update($set=$arr,$where);

@@ -19,9 +19,30 @@ class AdminController extends Zend_Controller_Action
 	  * 修改密码控制
 	  * @return [type] [description]
 	  */
+	 public function changepwdAction()
+	 {
+	 	$session = new Zend_Session_Namespace('user');
+	 	$newpwd = strip_tags(trim($this->getRequest()->getParam('pwd')));
+	 	$repwd = strip_tags(trim($this->getRequest()->getParam('repwd')));
+	 	if ($newpwd == $repwd) {
+	 		$UserMapper = new Application_Model_UserMapper();
+	 		$arr = $UserMapper->modifyUserPwd($session->userid,$newpwd);
+	 		if ($arr) {
+	 			// $this->_redirect("/admin/percenter");
+	 			$alt = "<meta http-equiv='content-type' content='text/html; charset=UTF-8'><script language=\"JavaScript\">alert(\"密码已修改，要记住哦\");location.href = \"/admin/percenter\";</script>";
+	 		    echo $alt;
+	 		    exit;
+	 		}
+	 	}
+	 	else{
+	 		$alt = "<meta http-equiv='content-type' content='text/html; charset=UTF-8'><script language=\"JavaScript\">alert(\"两次密码不一样哦，你认真填一下呗\");location.href = \"/admin/percenter\";</script>";
+	 		echo $alt;
+	 		exit;
+	 	}
+	 }
 	 public function percenterAction()
 	 {
-
+	 	
 	 }
 	 /**
 	  * 超级管理员“基本设置”控制
@@ -29,7 +50,7 @@ class AdminController extends Zend_Controller_Action
 	  */
 	 public function basesetAction()
 	 {
-
+	 	
 	 }
 	 /**
 	  * 超级管理员“学员信息”控制

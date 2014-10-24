@@ -33,7 +33,7 @@
         			<li><a href="/admin/percenter">个人中心</a></li>
       			</ul>
       			<ul class="nav navbar-nav navbar-right">
-        		<li><a href="#"><span style="color: #FFF">欢迎您，  ddd</span>  退出</a></li>
+        		<li><a href="/login/logout"><span style="color: #FFF">欢迎您， <?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>  退出</a></li>
       			</ul>
     		</div>
   		</div>
@@ -43,9 +43,6 @@
     <div class="main-title">
       <h2>第<span>53</span>期党校党员班学员信息表</h2>
       <form>
-        <label for="name">姓名：</label>
-        <input type="text" class="form-control st-name" id="name">
-        
         <label>校区:</label>
         <span>屯溪路</span>
         
@@ -74,40 +71,41 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td><input type="checkbox" name="xueyuan" class="form-control check-change"></td>
-              <td>20105749</td>
-              <td>令狐冲</td>
-              <td>13965072159</td>
-              <td>本科</td>
-              <td><button class="btn btn-default">非优秀</button></td>
-              <td><button class="btn btn-default">毕业</button></td>
-              <td>89</td>
-            </tr>
+            <?php
+              if ($this->paginator_studentinfo)
+              {
+                foreach ($this->paginator_studentinfo as $stuList)
+                {
+                  $stno = $stuList['stno'];
+                  $stuname = $stuList['name'];
+                  $stuphone = $stuList['phonenum'];
+                  echo "<tr>";
+                  echo "<td><input type=checkbox name=xueyuan class=form-control check-change></td>";
+                  echo "<td>".$stno."</td>";
+                  echo "<td>".$stuname."</td>";
+                  echo "<td>".$stuphone."</td>";
+                  echo "</tr>";
+                }
+              }
+              else
+              {
+                echo "no";
+              }
 
-            <tr>
-              <td><input type="checkbox" name="xueyuan" class="form-control check-change"></td>
-              <td>20105749</td>
-              <td>令狐冲</td>
-              <td>13965072159</td>
-              <td>本科</td>
-              <td><button class="btn btn-default">非优秀</button></td>
-              <td><button class="btn btn-default">毕业</button></td>
-              <td>89</td>
-            </tr>
-
-            <tr>
-              <td><input type="checkbox" name="xueyuan" class="form-control check-change"></td>
-              <td>20105749</td>
-              <td>令狐冲</td>
-              <td>13965072159</td>
-              <td>本科</td>
-              <td><button class="btn btn-default">非优秀</button></td>
-              <td><button class="btn btn-default">毕业</button></td>
-              <td>89</td>
-            </tr>
+              global $arrList;
+              $paginator_all=$this->paginator_all;
+            ?>
           </tbody>
         </table>
+        <div class="footer-fenye">
+          <ul class="pager">
+            <?php echo $this->paginationControl($this->paginator_studentinfo,
+                'Elastic',//页码样式 
+                'admin/pagination_control.phtml'//页码模板
+                );
+            ?>
+          </ul>
+        </div>
         <button type="button" class="btn btn-danger" id="all-del">一键删除</button>
       </form>
        <!-- 优秀学员 -->
@@ -115,6 +113,7 @@
           <label for="st-yx">优秀学员姓名（人数占所带学生总人数10%）</label>
           <textarea name="st-yx" id="st-yx" class="form-control" disabled>自动显示优秀学员姓名</textarea>
         </div>
+      <form class="form-horizontal" role="form" method="post" action="/admin/dxzj">
         <!-- 学员素质 -->
         <div class="info">
           <label for="xy-sz">如何严格招生，保证学员素质（措施、效果）</label>
@@ -135,11 +134,10 @@
           <label for="">开展实践活动情况（主题、形式、意义、效果）</label>
           <textarea name="shijian-content" id="shijian-content" class="form-control"></textarea>
         </div>
-
         <div class="info">
-          <button type="button" class="btn btn-info submit">提交</button>
+          <button id="button" class="btn btn-info submit">提交</button>
         </div>
-
+      </form>
     </div>
   </div>
 	<script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>

@@ -15,7 +15,7 @@ class Application_Model_ArticleMapper
 	{
 		$ab = $this->db->getAdapter();
 		$where = $ab->quoteInto('id =?',$id);
-		$res = $this->db->fetchRow($where);
+		$res = $this->db->fetchRow($where)->toarray();
 		if ($res) {
 			return $res;
 		}else{
@@ -56,18 +56,39 @@ class Application_Model_ArticleMapper
 		}
 	}
 
-	public function addArticles($title,$content,$publisedtime,$imgurl)
+	public function addArticles($title,$content)
 	{
 		$arr = array(
 						 'title'=>$title,
 						 //'ansA'=>md5($Password),
 						 'content'	=>$content,
-						 'publisedtime'=>$publisedtime,
-						 'imgurl'	=>$imgurl
+						 'publisedtime'=>time(),
+						 'imgurl'	=>''
 
 						);
 			$ab=$this->db->getAdapter();
 			$res = $this->db->insert($arr,true);
+			//echo $res;
+			
+			return $res;
+		
+	}
+
+		public function updateArticles($id,$title,$content)
+	{
+		$arr = array(
+						 'title'=>$title,
+						 //'ansA'=>md5($Password),
+						 'content'	=>$content,
+						 'publisedtime'=>'',
+						 'imgurl'	=>''
+
+						);
+			$ab=$this->db->getAdapter();
+			$where=$ab->quoteInto('id=?',$id);
+			$res = $this->db->update($set=$arr,$where);
+			//$res = $this->db->insert($arr,true);
+			//echo $res;
 			
 			return $res;
 		

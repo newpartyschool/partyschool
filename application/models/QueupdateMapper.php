@@ -37,6 +37,39 @@ class Application_Model_QueupdateMapper
 
 	}
 
+	/**
+	 * 查找题目，每页8个题目
+	 * @param  array  $where [description]
+	 * @param  [type] $order [description]
+	 * @param  [type] $limit [description]
+	 * @return [type]        [description]
+	 */
+	public function findQuestionFenYe($where=array(),$order = null,$limit = null)
+	{
+		$select = $this->db->select();
+		if (count($where) > 0) {
+			foreach ($where as $key => $value) {
+				$select->where($key.'=?',$value);
+			}
+		}
+
+		if ($order) {
+			$select->order($order);
+		}
+
+		if ($limit) {
+			$select->limit($limit);
+		}
+
+		$arr = $this->db->fetchAll($select)->toArray();
+
+		if (count($arr) > 0) {
+			return $arr;
+		}else{
+			return null;
+		}
+	}
+
 /*	public function delQuestionById($qeid=null)
 	{
 		$ab = $this->db->getAdapter();

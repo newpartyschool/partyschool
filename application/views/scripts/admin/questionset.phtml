@@ -39,7 +39,7 @@
               <li><a href="/admin/learninfo">学习资讯</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span style="color: #FFF">欢迎您，  超级管理员</span>  退出</a></li>
+            <li><a href="/login/logout"><span style="color: #FFF">欢迎您， <?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>  退出</a></li>
             </ul>
         </div>
       </div>
@@ -47,19 +47,26 @@
     <!-- 页面内容 -->
     <div class="main-container">
       <div class="main-title">
-        <form>
+        <?php 
+        $periodnum=$this->periodnum;
+        $testtime=$this->testtime;
+        $timunum=$this->timunum;
+
+
+        echo
+          "<form action =\"/admin/questionset\" method =\"post\">
           <span>第</span>
-          <input type="text" class="form-control classdate" >
+          <input name=\"periodnum\" type=\"text\" class=\"form-control classdate\" value=\"".$periodnum."\">
           <span>期</span>
           
-          <label for="test-time">测试时间:</label>
-          <input type="time" class="form-control" id="test-time">
+          <label for=\"test-time\">测试时间:</label>
+          <input name=\"testtime\" type=\"time\" class=\"form-control\" id=\"test-time\" value=\"".$testtime."\">
           
-          <label for="timu-num">题目数量:</label>
-          <input type="text" class="form-control" id="timu-num" placeholder="输入题目数量">
+          <label for=\"timu-num\">题目数量:</label>
+          <input name=\"timunum\" type=\"text\" class=\"form-control\" id=\"timu-num\" placeholder=\"输入题目数量\" value=\"".$timunum."\">
 
-          <button type="button" class="btn btn-info">抽取</button>
-        </form>
+          <button type=\"submit\" class=\"btn btn-info\">抽取</button>
+        </form>" ?>
       </div>
       <!-- 例题 -->
       <div class="ques-exp">

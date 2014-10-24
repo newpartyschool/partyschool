@@ -21,9 +21,9 @@
 		<div class="container">
 			<?php
 					if($this->article){
-						$id = $this->article->id;
-						$title = $this->article->title;
-						$content =$this->article->content;
+						$id = $this->article['id'];
+						$title = $this->article['title'];
+						$content =$this->article['content'];
 						echo "<div class=\"content-title\">".$title."</div>";
 						echo "<div class=\"content-p\">".$content."</div>";
 					}

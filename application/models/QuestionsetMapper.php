@@ -36,6 +36,18 @@ class Application_Model_QuestionsetMapper
 		}
 	}
 	/**
+	 * 随机抽取题目的id，每页8个题目
+	 * @param  array  $where [description]
+	 * @param  [type] $order [description]
+	 * @param  [type] $limit [description]
+	 * @return [type]        [description]
+	 */
+/*	public function chooseQuestion()
+	{
+		$select = $this->db->select * from 表 order By rand() Limit 10;
+	}*/
+
+	/**
 	 * 查找题目，每页8个题目
 	 * @param  array  $where [description]
 	 * @param  [type] $order [description]

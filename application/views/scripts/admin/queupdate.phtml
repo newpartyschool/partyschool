@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-cn">
   <head>
     <meta charset="utf-8">
@@ -42,7 +41,7 @@
              <!--  <li><a href="psmangement.html">班主任密码</a></li> -->
             </ul>
             <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span style="color: #FFF">欢迎您，  超级管理员</span>  退出</a></li>
+            <li><a href="/login/logout"><span style="color: #FFF">欢迎您， <?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>  退出</a></li>
             </ul>
         </div>
       </div>
@@ -66,7 +65,7 @@
               $ansY = $questionsetList['ansY'];
               echo "<div class=\"question-container\"><div class=\"question\">"."<p>".$qetitle."</p><p>".$ansA."</p><p>".$ansB."</p><p>".$ansC."</p><p>".$ansD."</p><span>"."正确答案：".$ansY."</span></div>
                       <div class=\"question-control\">
-                          <button type=\"button\" class=\"btn btn-info update-btn\" id=\"editTimu\" qeid=\"".$qeid."\" timu=\"".$qetitle."\" ansA=\"".$ansA."\" ansB=\"".$ansB."\" ansC=\"".$ansC."\" ansD=\"".$ansD."\" rightAns=\"".$ansY."\">更新</button>
+                          <button type=\"button\" class=\" editTimu  btn btn-info update-btn \" qeid=\"".$qeid."\" timu=\"".$qetitle."\" ansA=\"".$ansA."\" ansB=\"".$ansB."\" ansC=\"".$ansC."\" ansD=\"".$ansD."\" rightAns=\"".$ansY."\">更新</button>
                           <a href=\"/admin/deletequestion/qeid/".$qeid."><button type=\"button\" class=\"btn btn-danger del-btn\">删除</button></a>
                       </div>
                     </div>";

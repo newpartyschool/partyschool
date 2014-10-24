@@ -32,7 +32,7 @@
         			<li><a href="/admin/percenter" style="color: #FFF;">个人中心</a></li>
       			</ul>
       			<ul class="nav navbar-nav navbar-right">
-        		<li><a href="#"><span style="color: #FFF">欢迎您，  班主任</span>  退出</a></li>
+        		<li><a href="/login/logout"><span style="color: #FFF">欢迎您, <?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>  退出</a></li>
       			</ul>
     		</div>
   		</div>
@@ -41,18 +41,22 @@
     <div class="main-content">
       <div class="content-title">
         <h2>第52期党校党员班</h2>
-        <p>班主任姓名：<span>张三三</span></p>
       </div>
       <div class="content-form">
-        <form class="form-horizontal" role="form">
+        <form class="form-horizontal" role="form" method="post" action="/admin/percenter">
           <div class="form-group form-pos">
             <div class="col-sm-10">
-              <input type="password" class="form-control" id="pschange" placeholder="输入要新密码">
+              <input type="text" class="form-control st-name" id="name" name="realname" placeholder="输入真实姓名">
+            </div>
+          </div>
+          <div class="form-group form-pos">
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="pschange" name="newpwd" placeholder="输入新密码">
             </div>
           </div>
           <div class="form-group form-pos">
             <div class="col-sm-10 ">
-              <input type="password" class="form-control" id="inputPassword3" placeholder="确认密码">
+              <input type="password" class="form-control" id="inputPassword3" name="repwd" placeholder="确认密码">
             </div>
           </div>
           <div class="form-group from-pos">

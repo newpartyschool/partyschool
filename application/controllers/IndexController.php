@@ -28,7 +28,7 @@ class IndexController extends Zend_Controller_Action
        $articleMapper = new Application_Model_ArticleMapper();
        $order = "publisedtime DESC";
        $where = array();
-       $limit = 8;
+       $limit = 10;
        $arrList = $articleMapper->getArticles($where,$order,$limit);
        $this->view->arrList = $arrList;
     }

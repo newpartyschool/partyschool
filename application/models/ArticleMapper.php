@@ -93,4 +93,28 @@ class Application_Model_ArticleMapper
 			return $res;
 		
 	}
+
+	public function deleteZx($id)
+	{
+		if (!is_array($id))
+				$id=array($id);
+
+			$ab=$this->db->getAdapter();
+
+			foreach ($id as $id) {
+				$where=$ab->quoteInto('id=?',$id);
+				$arr=$this->db->fetchAll($where)->toArray();
+
+
+				//进行问题的删除
+				$del=$this->db->delete($where);
+				if ($del!='') {
+					$info="该资讯已成功删除！";
+				}  else {
+					$info="删除资讯失败，请重新删除！";
+				}
+			}
+			
+			return $info;
+	}
 }

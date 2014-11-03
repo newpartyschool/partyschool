@@ -112,15 +112,28 @@ class Application_Model_UserMapper
 	 * @param  [type] $pw     [description]
 	 * @return [type]         [description]
 	 */
-	public function modifyUserPwd($userid,$pw)
+	public function modifyUserInfo($rename,$userid,$pw)
 	{
-		// $arr = array('Password'=>md5($Password),);
-		$arr = array('pw' => $pw, );
-		$ab=$this->db->getAdapter();
-		$where=$ab->quoteInto('userid=?',$userid);
-		$res=$this->db->update($set=$arr,$where);
-
-		return $res;
+		if (!empty($rename))
+		{
+			$arr = array('realname' => $rename);
+			$ab=$this->db->getAdapter();
+			$where=$ab->quoteInto('userid=?',$userid);
+			$res=$this->db->update($set=$arr,$where);
+			return $res;
+		}
+		elseif(!empty($pw))
+		{
+			$arr = array('pw' => $pw,);
+			$ab=$this->db->getAdapter();
+			$where=$ab->quoteInto('userid=?',$userid);
+			$res=$this->db->update($set=$arr,$where);
+			return $res;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	

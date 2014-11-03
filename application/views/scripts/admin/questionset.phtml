@@ -39,7 +39,7 @@
               <li><a href="/admin/learninfo">学习资讯</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span style="color: #FFF">欢迎您，  超级管理员</span>  退出</a></li>
+            <li><a href="/login/logout"><span style="color: #FFF">欢迎您， <?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>  退出</a></li>
             </ul>
         </div>
       </div>
@@ -54,7 +54,7 @@
 
 
         echo
-          "<form action =\"/admin/questionset\" method =\"post\">
+          "<form action =\"/admin/questionset\" method =\"get\">
           <span>第</span>
           <input name=\"periodnum\" type=\"text\" class=\"form-control classdate\" value=\"".$periodnum."\">
           <span>期</span>
@@ -121,22 +121,6 @@
           </ul>
         </div>
       </div>
-          
-            
-        <!-- 题目容器 -->
-<!--         <div class="question-container">
-          <div class="question">
-            <p>2.中国共产党的最高理想和最终目标是（  ）</p>
-            <p>(A)实现共产主义；</p>
-            <p>(B)实现共产主义社会制度；</p>
-            <p>(C)实现中国特色社会主义宏伟目标</p>
-            <p>(D)实现中国特色社会主义宏伟目标</p>
-            <span>正确答案：（A）</span>
-          </div>
-        </div> -->
-
-
-
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>

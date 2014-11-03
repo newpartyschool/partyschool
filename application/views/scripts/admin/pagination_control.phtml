@@ -1,31 +1,32 @@
 <ul>
 
 <?php
-	if ($this->previous==1)
-		$tmp = $this->url(array('page'=>null));
-	else
-		$tmp = $this->url(array('page'=>$this->previous));
-	if($this->previous!=null)
-		echo "<li><a href=\"$tmp\">&laquo; 上一页</a></li>";
-	else
-		echo "&laquo; 上一页";
+	if(!empty($_GET["periodnum"])&!empty($_GET["testtime"])&!empty($_GET["timunum"])){
+	    $periodnum = $_GET["periodnum"];
+	    $testtime = $_GET["testtime"];
+	    $timunum = $_GET["timunum"];
+	}else{
+		$periodnum = '';
+        $testtime = '';
+        $timunum = '';
+    }
+		if ($this->previous==1)
+			$tmp = $this->url(array('page'=>null));
+		else
+			$tmp = $this->url(array('page'=>$this->previous));
+		if($this->previous!=null)
 
-/*	foreach ($this->pagesInRange as $page){
-		if ($page != $this->current) {
-			if ($page==1)
-				$url = $this->url(array('page'=>null));
-			else
-				$url = $this->url(array('page'=>$page));
-			echo "<li><a href=\"$url\">$page</a></li>";
-		} else
-			echo "<li class=\"active\">$page</li>";
-	}*/
+			echo "<li><a href=\"$tmp?&periodnum=".$periodnum."&testtime=".$testtime."&timunum=".$timunum."\">&laquo; 上一页</a></li>";
+		else
+			echo "&laquo; 上一页";
 
-	$tmp = $this->url(array('page'=>$this->next));
-	if($this->next!=null)
-		echo "<li><a href=\"$tmp\">下一页 &raquo;</a></li>";
-	else
-		echo "下一页 &raquo;";
+		$tmp = $this->url(array('page'=>$this->next));
+		if($this->next!=null)
+			echo "<li><a href=\"$tmp?&periodnum=".$periodnum."&testtime=".$testtime."&timunum=".$timunum."\">下一页 &raquo;</a></li>";
+		else
+			echo "下一页 &raquo;";
+	
 ?>
 
 </ul>
+

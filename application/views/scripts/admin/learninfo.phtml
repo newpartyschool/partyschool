@@ -38,7 +38,7 @@
               <li><a href="/admin/learninfo" style="color: #FFF;">学习资讯</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span style="color: #FFF">欢迎您，  超级管理员</span>  退出</a></li>
+            <li><a href="/login/logout"><span style="color: #FFF">欢迎您，<?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>   退出</a></li>
             </ul>
         </div>
       </div>
@@ -54,9 +54,6 @@
         <form>
           <!-- 文章列表 -->
           <div class="title-container">
-               
-            
-                
                     <?php
                       if ($this->paginator_learninfo) {
                         foreach ($this->paginator_learninfo as $artcileList) {
@@ -64,7 +61,7 @@
                           $publisedtime = date('Y-m-d',$artcileList['publisedtime']);
                           $title = $artcileList['title'];
                           $content =$artcileList['content'];
-/*                          $len = strlen($title);
+/*                        $len = strlen($title);
                           if ($len > 51) {
                             $title = substr($title, 0,39)."...";
                           }*/
@@ -78,6 +75,7 @@
                                 ?>
                             </label>
                             <?php echo "<a href='/admin/editzx/id/".$id."'><button type=\"button\" class=\"btn btn-default\" zxid=\"".$id."\" >修改</button></a>" ?>
+               <?php echo "<a href='/admin/deletezx/id/".$id."'><button type=\"button\" class=\"btn btn-default\" zxid=\"".$id."\" >删除</button></a>" ?>
                           </div>
                           <?php
                         }

@@ -1,6 +1,62 @@
 
 <?php
 
+class Excel_Xml
+ {
+ 	private $header = "<?xml version=\"1.0\" encoding=\"%s\"?\>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:x=\"urn:schemas-microsoft-com:office:excel\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:html=\"http://www.w3.org/TR/REC-html40\">";
+ 	private $footer = "</Workbook>";
+ 	private $lines = array();
+ 	private $sEncoding;
+ 	private $bConvertTypes;
+ 	private $sWorksheetTitle;
+ 	public function __construct($sEncoding = 'UTF-8', $bConvertTypes = false, $sWorksheetTitle = 'Table1')
+ 	{
+ 		$this->bConvertTypes = $bConvertTypes;
+ 		$this->setEncoding($sEncoding);
+ 		$this->setWorksheetTitle($sWorksheetTitle);
+ 	}
+ 	public function setEncoding($sEncoding)
+ 	{
+ 		$this->sEncoding = $sEncoding;
+ 	}
+ 	public function setWorksheetTitle ($title)
+ 	{
+ 		$title = preg_replace ("/[\\\|:|\/|\?|\*|\[|\]]/", "", $title);
+ 		$title = substr ($title, 0, 31);
+ 		$this->sWorksheetTitle = $title;
+ 	}
+ 	private function addRow ($array)
+ 	{
+ 		$cells = "";
+ 		foreach ($array as $k => $v):
+ 			$type = 'String';
+ 		if ($this->bConvertTypes === true && is_numeric($v)):
+ 			$type = 'Number';
+ 		endif;
+ 		$v = htmlentities($v, ENT_COMPAT, $this->sEncoding);
+ 		$cells .= "<Cell><Data ss:Type=\"$type\">" . $v . "</Data></Cell>\n";
+ 		endforeach;
+ 		$this->lines[] = "<Row>\n" . $cells . "</Row>\n";
+ 	}
+ 	public function addArray ($array)
+ 	{
+ 		foreach ($array as $k => $v)
+ 			$this->addRow ($v);
+ 	}
+ 	public function generateXML ($filename = 'excel-export')
+ 	{
+ 		$filename = preg_replace('/[^aA-zZ0-9\_\-]/', '', $filename);
+ 		header("Content-Type: application/vnd.ms-excel; charset=" . $this->sEncoding);
+ 		header("Content-Disposition: inline; filename=\"" . $filename . ".xls\"");
+ 		echo stripslashes (sprintf($this->header, $this->sEncoding));
+ 		echo "\n<Worksheet ss:Name=\"" . $this->sWorksheetTitle . "\">\n<Table>\n";
+ 		foreach ($this->lines as $line)
+ 			echo $line;
+ 		    echo "</Table>\n</Worksheet>\n";
+ 		    echo $this->footer;
+ 	}
+ }
+
 class AdminController extends Zend_Controller_Action
 {
 	 public function init()
@@ -16,13 +72,17 @@ class AdminController extends Zend_Controller_Action
 	 	$session = new Zend_Session_Namespace('user');
 	 	if (isset($session->depid)&&$session->depid != 1)
 	 	{
+	 		$teacher = $session->realname;
+	 		$ClassMapper = new Application_Model_ClassMapper();
+	 		$classinfo = $ClassMapper->findClassInfo($teacher);
+	 		$classid = $classinfo[0]['classid'];
+
 	 		$sz = strip_tags(trim($this->getRequest()->getParam('xy-sz')));
 	 		$studycontent = strip_tags(trim($this->getRequest()->getParam('study-content')));
 	 		$taoluncontent = strip_tags(trim($this->getRequest()->getParam('taolun-content')));
 	 		$shijiancontent = strip_tags(trim($this->getRequest()->getParam('shijian-content')));
 	 		if (!empty($sz) && !empty($studycontent) && !empty($taoluncontent) && !empty($shijiancontent))
 	 		{
-	 			$classid = " ";
 	 			$ClassummaryMapper = new Application_Model_ClassummaryMapper();
 	 			$arr = $ClassummaryMapper->dxzjForm($classid,$sz,$studycontent,$taoluncontent,$shijiancontent);
 	 			if ($arr)
@@ -35,14 +95,14 @@ class AdminController extends Zend_Controller_Action
 	 		///学员信息输出
 	 		$stuMapper = new Application_Model_StuMapper();
 	 		$order = "stno DESC";
-	 		$where = array();
+	 		$where = array('classid' => $classid);
 	 		$limit = null;
 	 		$arrList = $stuMapper->getStuinfo($where,$order,$limit);
 
 	 		// $this->view->arrList = $arrList;
-	 		$num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
+	 		$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
 	 		$paginator_studentinfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
-	 		$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的文章数目
+	 		$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的学生信息数目
 	 		$paginator_studentinfo->setCurrentPageNumber($page); //设置第一页显示
 	 		$paginator_studentinfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
 	 		$this->view->paginator_studentinfo = $paginator_studentinfo;
@@ -67,6 +127,11 @@ class AdminController extends Zend_Controller_Action
 	 		$newpwd = strip_tags(trim($this->getRequest()->getParam('newpwd')));
 	 		$repwd = strip_tags(trim($this->getRequest()->getParam('repwd')));
 
+	 		$teacher = $session->realname;
+	 		$ClassMapper = new Application_Model_ClassMapper();
+	 		$classinfo = $ClassMapper->findClassInfo($teacher);
+	 		$classid = $classinfo[0]['classid'];
+
 	 		if (!empty($newpwd) || !empty($realname))
 	 		{
 	 			if ($newpwd == $repwd)
@@ -75,9 +140,11 @@ class AdminController extends Zend_Controller_Action
 	 				$userid = $session->userid;
 	 				$UserMapper = new Application_Model_UserMapper();
 	 				$arr = $UserMapper->modifyUserInfo($realname,$userid,md5($newpwd));
+	 				$ClassMapper = new Application_Model_ClassMapper();
+	 				$res = $ClassMapper->changeInfo($realname,$classid);
 	 				if ($arr)
 	 				{
-	 					echo "<script>alert('修改成功');</script>";
+	 					echo "<script>alert('修改成功,请重新登录');location.href='/login/logout';</script>";
 	 				}
 	 			}
 	 			else
@@ -88,10 +155,33 @@ class AdminController extends Zend_Controller_Action
 	 	}
 	 	else
 	 	{
-	 		echo "<script>alert('无权访问');location.href='/login'</script>";
+	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
 	 		exit;
 	 	}
 	 }
+
+	 /**
+	 *班主任页面导出excel
+	 * @return [type] [description]
+	 */
+	 public function xlsAction()
+	 {
+	 	// require_once 'excel.class.php';
+	 	$xls = new Excel_Xml('UTF-8',false,'测试');
+	 	$data = array(
+	 		1 => array('学院','校区','期数','学员素质','学习情况','讨论情况','实践活动情况'),
+	 		2 => array('管理学院','屯溪路校区','第1期','来自党校总结','党校总结学习情况','党校总结讨论情况','党校总结实践情况'),
+	 		3 => array('姓名','学号','年级','手机号','是否优秀','是否毕业','分数'),
+	 		4 => array('测试1','2013211121','本科','11111111111','非优秀','未毕业','82'),	
+	 		5 => array('测试2','2013222113','本科','11111111111','优秀','未毕业','89'),
+	 		6 => array('测试1','2013211121','本科','11111111111','非优秀','未毕业','81'),
+	 		7 => array('测试1','2013214431','本科','11111111111','非优秀','未毕业','80'),
+	 		8 => array('测试1','2013214621','本科','11111111111','非优秀','未毕业','90')
+	 		);
+	 	$xls->addArray($data);
+	 	$xls->generateXML('2013210154');
+	 }
+
 	 /**
 	  * 超级管理员“基本设置”控制
 	  * @return [type] [description]
@@ -196,44 +286,20 @@ class AdminController extends Zend_Controller_Action
 	  */
 	 public function questionsetAction()
 	 {
-/*	 	$periodnum = '';
-	 	$testtime = '';
-	 	$timunum = '';*/
-
-/*	 	if(!empty($_POST["periodnum"]))
-		{
-		    $periodnum = $_POST["periodnum"];
-		}
-
-		if(!empty($_POST["testtime"]))
-		{
-		    $testtime = $_POST["testtime"];
-		}
-
-		if(!empty($_POST["timunum"]))
-		{
-		    $timunum = $_POST["timunum"];
-		}*/
-
-/*	 	$this->view->periodnum=$periodnum;
-	 	$this->view->testtime=$testtime;
-	 	$this->view->timunum=$timunum;*/
 	 	$session = new Zend_Session_Namespace('user');
 	 	if (isset($session->depid) && $session->depid == 1)
 	 	{
-	 		if(!empty($_POST["periodnum"])&!empty($_POST["testtime"])&!empty($_POST["timunum"]))
+	 		if(!empty($_GET["periodnum"])&!empty($_GET["testtime"])&!empty($_GET["timunum"]))
 	 		{
-	 			$periodnum = $_POST["periodnum"];
-	 			$testtime = $_POST["testtime"];
-	 			$timunum = $_POST["timunum"];
-	 			$this->view->periodnum=$periodnum;
-	 			$this->view->testtime=$testtime;
-	 			$this->view->timunum=$timunum;
+	 			$periodnum = $_GET["periodnum"];
+	 			$testtime = $_GET["testtime"];
+	 			$timunum = $_GET["timunum"];
+
 	 			$selectedquestionMapper = new Application_Model_SelectedquestionMapper();
 	 			$same = $selectedquestionMapper->findSelectedquestionById($periodnum);
 
-	 			if (!$same)
-	 			{
+        	    if (!$same)
+        	    {
         			$periodsetMapper = new Application_Model_PeriodsetMapper();
 					$result = $periodsetMapper->updatePeriodset($periodnum,$testtime);
 
@@ -244,9 +310,11 @@ class AdminController extends Zend_Controller_Action
 			        
 					$arrList = $queupdateMapper->findQuestionFenYe($where,$order,$limit);
 
-			        foreach ($arrList as $value) {
-			        	$qeid = $value['qeid'];	
+			        foreach ($arrList as $value)
+			        {
+			        	$qeid = $value['qeid'];
 				 		$info = $selectedquestionMapper->addSelectedquestion($periodnum,$qeid);
+				 		
 				 	}
 				 	if (!$arrList)
 				 	{
@@ -259,49 +327,37 @@ class AdminController extends Zend_Controller_Action
 				}
 				else
 				{
-					foreach ($same as $key=>$values) {
+					foreach (array_reverse($same )as $key=>$values)
+					{
 			        	$qeid = $values['qeid'];
 			        	$queupdateMapper = new Application_Model_QueupdateMapper();
 				 		$arr= $queupdateMapper->findQueupdateById($qeid);
-				 		$arrList[]=$arr[0];	
+				 		$arrList[]=$arr[0];
 			        }
-
-			        echo "<script>alert('本期已抽取过，不再抽取');</script>";
-			        //print_r($arrList);
-			        //exit();
-					
 			    }
-			        // print_r($arrList);
-
-/*					$num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
-			        $paginator_choose = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
-			        $paginator_choose->setItemCountPerPage($num); //设置每一页显示的文章数目
-			        $paginator_choose->setCurrentPageNumber($page); //设置第一页显示
-			        $paginator_choose->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
-
-			        $this->view->paginator_choose = $paginator_choose;*/				
 			}
 			else
 			{
 				$arrList=array();
-/*   			$num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
+				$periodnum = '';
+        		$testtime = '';
+        		$timunum = '';
+        	}
+		        $this->view->periodnum=$periodnum;
+		        $this->view->testtime=$testtime;
+		        $this->view->timunum=$timunum;
+
+		        $num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
 		        $paginator_choose = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
 		        $paginator_choose->setItemCountPerPage($num); //设置每一页显示的文章数目
 		        $paginator_choose->setCurrentPageNumber($page); //设置第一页显示
 		        $paginator_choose->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
-		        $this->view->paginator_choose = $paginator_choose;*/
-		    }
 
-		    $num=5; $page=1; //设置每一页显示的文章数目 //设置第一页显示
-			$paginator_choose = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
-			$paginator_choose->setItemCountPerPage($num); //设置每一页显示的文章数目
-			$paginator_choose->setCurrentPageNumber($page); //设置第一页显示
-			$paginator_choose->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+		        $this->view->paginator_choose = $paginator_choose;
 
-			$this->view->paginator_choose = $paginator_choose;
-	 	}
-	 	else
-	 	{
+		}
+		else
+		{
 	 		echo "<script>alert('无权访问');location.href='/login';</script>";
 	 		exit;
 	 	}
@@ -504,21 +560,28 @@ class AdminController extends Zend_Controller_Action
 
 	 }
 
-/*
 
-	 	 public function addarticleAction()
+
+	 public function addarticleAction()
 	 {
-	 	
-	 	$title = $_POST['zxtitle'];
-		$content = $_POST['zxcontent'];
+	 	$session = new Zend_Session_Namespace('user');
+	 	if (isset($session->depid) && $session->depid == 1)
+	 	{
+	 		$title = $_POST['zxtitle'];
+	 		$content = $_POST['zxcontent'];
 
-		$articleMapper = new Application_Model_ArticleMapper();
-		$result = $articleMapper->addArticles($title,$content,$publisedtime,$imgurl);
+	 		$articleMapper = new Application_Model_ArticleMapper();
+	 		$result = $articleMapper->addArticles($title,$content,$publisedtime,$imgurl);
 
-		$this->_redirect("/admin/learninfo");
+	 		$this->_redirect("/admin/learninfo");
+	 	}
+	 	else
+	 	{
+	 		echo "<script>alert('无权访问,重新登录');location.href='/login';</script>";
+	 		exit;
+	 	}
 
-
-	 }*/
+	 }
 
 	 public function editzxAction()
 	 {

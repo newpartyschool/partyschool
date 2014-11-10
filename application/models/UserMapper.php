@@ -116,7 +116,15 @@ class Application_Model_UserMapper
 	{
 		if (!empty($rename))
 		{
-			$arr = array('pw' => $pw, 'realname' => $rename);
+			$arr = array('realname' => $rename);
+			$ab=$this->db->getAdapter();
+			$where=$ab->quoteInto('userid=?',$userid);
+			$res=$this->db->update($set=$arr,$where);
+			return $res;
+		}
+		elseif(!empty($pw))
+		{
+			$arr = array('pw' => $pw,);
 			$ab=$this->db->getAdapter();
 			$where=$ab->quoteInto('userid=?',$userid);
 			$res=$this->db->update($set=$arr,$where);
@@ -124,11 +132,7 @@ class Application_Model_UserMapper
 		}
 		else
 		{
-			$arr = array('pw' => $pw,);
-			$ab=$this->db->getAdapter();
-			$where=$ab->quoteInto('userid=?',$userid);
-			$res=$this->db->update($set=$arr,$where);
-			return $res;
+			return false;
 		}
 	}
 

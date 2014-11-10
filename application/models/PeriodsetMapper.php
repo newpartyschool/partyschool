@@ -95,4 +95,15 @@ class Application_Model_PeriodsetMapper
 			return $info;
 		}
 
+		//查询最新一期期数
+		public function findPeriod()
+		{
+			$limit = 1;
+			$select = $this->db->select();
+			$select -> order('enrollstart DESC');
+			$select -> limit($limit);
+			$res = $this->db->fetchAll($select)->toArray();
+			return $res;
+		}
+
 }

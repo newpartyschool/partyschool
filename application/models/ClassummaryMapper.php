@@ -3,7 +3,7 @@ class Application_Model_ClassummaryMapper
 {
 	function __construct()
 	{
-		$this->db = new Application_Model_DbTable_Classummary();
+		$this->db = new Application_Model_DbTable_Classumary();
 	}
 
 	/*

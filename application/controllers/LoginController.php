@@ -8,13 +8,7 @@ class LoginController extends Zend_Controller_Action
 
 	public function indexAction()
 	{
-		// // 实验：-----------------------从数据库取出文章
-		// $modelArticle = new Application_Model_Article();
-	 // 	$id = 1;
-	 // 	$title = '我们之间有太多的误会';
-	 // 	$where = array('id' => 1);
-	 // 	$article = $modelArticle->getArticle($where);
-	 // 	$this->view->article = $article;
+        
 	}
 
 	/**

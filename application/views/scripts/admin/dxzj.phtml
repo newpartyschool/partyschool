@@ -33,45 +33,28 @@
         			<li><a href="/admin/percenter">个人中心</a></li>
       			</ul>
       			<ul class="nav navbar-nav navbar-right">
-        		<li><a href="/login/logout"><span style="color: #FFF">欢迎您， <?php $session = new Zend_Session_Namespace('user'); echo $session->realname;?></span>  退出</a></li>
+        		<li><a href="/login/logout"><span style="color: #FFF">欢迎您， <?php echo $this->realname;?></span>  退出</a></li>
       			</ul>
     		</div>
   		</div>
 	</div>
-  <!-- 获取班级数据 -->
-  <?php
-      $teacher = $session->realname;
-      $ClassMapper = new Application_Model_ClassMapper();
-      $classinfo = $ClassMapper->findClassInfo($teacher);
-
-      $classid = $classinfo[0]['classid'];
-      $campus = $classinfo[0]['campus'];
-      $depid = $classinfo[0]['depid'];
-      $classtype =$classinfo[0]['classtype'];
-      //查询学院信息
-      $DepartmentMapper = new Application_Model_DepartmentMapper();
-      $depInfo = $DepartmentMapper->findDept($depid);
-      $depname = $depInfo[0]['depname'];
-  ?>
   <!-- 页面内容 -->
   <div class="main-container">
     <div class="main-title">
-      <h2>第<span><?php echo $classid;?></span>期党校党员班学员信息表</h2>
-      <form action="/admin/echoxls">
+      <h2>第<?php echo $this->classid;?>期党校党员班学员信息表</h2>
         <label>校区:</label>
-        <span><?php echo $campus;?></span>
+        <span><?php echo $this->campus;?></span>
         
         <label>学院：</label>
-        <span><?php echo $depname;?></span>
+        <span><?php echo $this->depname;?></span>
 
         <label>班级：</label>
-        <span><?php echo $classtype;?></span>
+        <span><?php echo $this->classtype;?></span>
 
-        <button type="button" class="btn btn-info" id="product-excel">生成excel</button>
-      </form>
+        <a class="btn btn-info" href="/admin/xls">生成excel</a>
     </div>
     <div class="main-content">
-      <form>
+      <div class="main-info">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -79,7 +62,7 @@
               <th>学号</th>
               <th>姓名</th>
               <th>手机号码</th>
-              <th>年纪</th>
+              <th>性别</th>
               <th>优秀状态</th>
               <th>毕业状态</th>
               <th>成绩</th>
@@ -112,8 +95,8 @@
                   echo "<td>{$stuname}</td>";
                   echo "<td>{$stuphone}</td>";
                   echo "<td>{$sex}</td>";
-                  echo '<td><button class="btn btn-default">'.$isgood.'</button></td>';
-                  echo '<td><button class="btn btn-default">'.$isgraduate.'</button></td>';
+                  echo '<td><button class="btn btn-default youxiu">'.$isgood.'</button></td>';
+                  echo '<td><button class="btn btn-default biye">'.$isgraduate.'</button></td>';
                   echo "<td>{$score}</td>";
                   echo "</tr>";
                 }
@@ -130,7 +113,7 @@
         </table>
         <div class="footer-fenye">
           <ul class="pager">
-            <?php echo $this->paginationControl($this->paginator_studentinfo,
+             <?php echo $this->paginationControl($this->paginator_studentinfo,
                 'Elastic',//页码样式 
                 'admin/pagination_control.phtml'//页码模板
                 );
@@ -138,44 +121,34 @@
           </ul>
         </div>
         <button type="button" class="btn btn-danger" id="all-del">一键删除</button>
-      </form>
+      </div>
        <!-- 优秀学员 -->
         <div class="students-yx info">
           <label for="st-yx">优秀学员姓名（人数占所带学生总人数10%）</label>
           <textarea name="st-yx" id="st-yx" class="form-control" disabled>自动显示优秀学员姓名</textarea>
         </div>
 
-      <!-- 获取党校总结数据开始 -->
-      <?php
-         $ClassummaryMapper = new Application_Model_ClassummaryMapper();
-         $dxInfo  = $ClassummaryMapper->dxzjdata($classid);
-         $xysz    = $dxInfo['xysz'];
-         $study   = $dxInfo['study'];
-         $taolun  = $dxInfo['taolun'];
-         $shijian = $dxInfo['shijian'];
-      ?>
-      <!-- 结束 -->
       <!-- 党校总结表单 -->
       <form class="form-horizontal" role="form" method="post" action="/admin/dxzj">
         <!-- 学员素质 -->
         <div class="info">
           <label for="xy-sz">如何严格招生，保证学员素质（措施、效果）</label>
-          <textarea name="xy-sz" id="xy-sz" class="form-control"><?php echo $xysz;?></textarea>
+          <textarea name="xy-sz" id="xy-sz" class="form-control"><?php echo $this->xysz;?></textarea>
         </div>
         <!-- 学习情况 -->
         <div class="info">
           <label for="study-content">组织集中学习情况（主题、次数、效果）</label>
-          <textarea name="study-content" id="study-content" class="form-control"><?php echo $study;?></textarea>
+          <textarea name="study-content" id="study-content" class="form-control"><?php echo $this->study;?></textarea>
         </div>
         <!-- 讨论情况 -->
         <div class="info">
           <label for="taolun-content">组织讨论情况（主题、次数、效果）</label>
-          <textarea name="taolun-content" id="taolun-content" class="form-control"><?php echo $taolun;?></textarea>
+          <textarea name="taolun-content" id="taolun-content" class="form-control"><?php echo $this->taolun;?></textarea>
         </div>
         <!-- 实践活动情况 -->
         <div class="info">
           <label for="">开展实践活动情况（主题、形式、意义、效果）</label>
-          <textarea name="shijian-content" id="shijian-content" class="form-control"><?php echo $shijian;?></textarea>
+          <textarea name="shijian-content" id="shijian-content" class="form-control"><?php echo $this->shijian;?></textarea>
         </div>
         <div class="info">
           <button id="button" class="btn btn-info submit">提交</button>

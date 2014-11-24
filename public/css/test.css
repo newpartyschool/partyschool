@@ -9,11 +9,9 @@ li{
 span{
 	color: red;
 }
-#content{
-	width: 100%;
-	position: absolute;
-	top:15%;
-	
+#content{	
+	padding-top: 23%;
+	margin-bottom: 30%;
 }
 #content .time{
 	word-spacing: 1em;
@@ -21,13 +19,18 @@ span{
 	font-family: '微软雅黑';
 	color: gray;
 }
+.main img{
+	position:absolute;
+	top:0px;
+	z-index:-1;
+}
 .question{
 	width: 90%;
+	height:70%;
 	margin:auto;
 	font-size: 5vw;
 	font-family: '微软雅黑';
 	padding: 0.5em;
-	
 	border-top:1px solid black;
 	border-bottom:1px solid black;
 }
@@ -40,16 +43,36 @@ span{
 }
 #content .button li{
 	margin-top: 1em;
+	margin-left: 1em;
 	width: 20%;
-}
-#content input{
 	border: none;
 	text-align: center;
-	width:90%; 
 	font-size: 3.5vw;
 	color: white;
 	background-color: rgb(219,85,101);
 	border-radius: 0.2em;
 	line-height: 2em;
-
 }
+.radio-control{
+	width: 20px;
+	height: 14px;
+}
+#header{
+	position: fixed;
+	top:0;
+	z-index:1;
+}
+#footer{
+	position: fixed;
+	bottom:0px;
+	z-index:1;
+}
+.ans-warn{
+	width: 100%;
+	overflow:hidden;
+}
+#ansTest{
+	display: inline-block;
+	float:right;
+}
+

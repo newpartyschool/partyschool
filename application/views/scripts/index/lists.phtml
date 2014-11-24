@@ -19,7 +19,7 @@
 			<a href="../" ><img src="/images/home.jpg" height="100%" width="100%"/></a>
 		</div>
 		<div id="content">
-			<div>2014年9月</div>
+			<div>2014年10月</div>
 			<dl>
 				<!-- <dt><?php //echo $this->article->publisedtime?></dt>
 				<dd><a href="#"><?php //echo $this->article->title?></a></dd>
@@ -36,8 +36,8 @@
 							$publisedtime = date('Y-m-d',$artcileList['publisedtime']);
 							$title = $artcileList['title'];
 							$len = strlen($title);
-							if ($len > 51) {
-								$title = substr($title, 0,39)."...";
+							if ($len > 41) {
+								$title = substr($title,0,30)."...";
 							}
 							// echo "zishu:".strlen($title);
 							echo "<dt>".$publisedtime."</dt>";

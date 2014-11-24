@@ -8,43 +8,89 @@
 	<meta name="apple-touch-fullscreen" content="YES">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="format-detection" content="telephone=no">
-	<title>Test</title>
-	<script type="text/javascript" src="/js/choose.js"></script>
-	<script type="text/javascript" src="/js/base.js"></script>
+	<title>在线测试</title>
+	<!-- <script type="text/javascript" src="/js/choose.js"></script>
+	<script type="text/javascript" src="/js/base.js"></script> -->
 	<link href="/css/base.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="/css/test.css">
-	<style type="text/css">
-		
-	</style>
+
 </head>
 
 <body>
 	<div class = "main">
 		<img src="/images/base_bg.jpg" height="100%" width="100%"/>
 		<div id = "home">
-			<a href="../" ><img src="/images/home.jpg" height="100%" width="100%"/></a>
+			<a href="/index" ><img src="/images/home.jpg" height="100%" width="100%"/></a>
 		</div>
 		<div id="content">
 			<ul class="time">
-				<li>本次测试共<span>10题</span></li>
+				<li>本次测试共<span>20题</span></li>
 				<li>测试间<span>20</span>分钟</li>
-				<li>剩余时间：<span>01:20</span></li>
+				<li>剩余时间：<span>20:00</span></li>
 			</ul>
 			<div class="question" id="que">
-				<p>1、中国房产当是中国工人阶级的先锋队，表明了党的（）</p>
-				<ul>
-					<li>A、阶级性</li>
-					<li>B、民主性</li>
-					<li>C、群众性</li>
-					<li>D、先进性</li>
-				</ul>
+			<?php
+			    global $arrList;
+          		$paginator_choose=$this->paginator_choose;
+	          if ($this->paginator_choose) {
+	            foreach ($this->paginator_choose as $questionsetList) {
+	              $qeid = $questionsetList['qeid'];          
+	              $qetitle = $questionsetList['qetitle'];
+	              $ansA = $questionsetList['ansA'];
+	              $ansB = $questionsetList['ansB'];
+	              $ansC = $questionsetList['ansC'];
+	              $ansD = $questionsetList['ansD'];
+	              $ansY = $questionsetList['ansY'];
+	              echo "<form action=\"\" method=\"get\">
+	              		 <p>".$this->pages."、".$qetitle."</p>
+							<ul id='qeans' data-ansy='".$ansY."''>
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansA."'/> ".$ansA."
+									</label>
+								</li>
+
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansB."'/> ".$ansB."
+									</label>
+								</li>
+
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansC."'/> ".$ansC."
+									</label>
+								</li>
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansD."'/> ".$ansD."
+									</label>
+								</li>
+							</ul>
+						</form>
+						";
+					}
+				}
+	         ?>
+	         <div class="ans-warn">
+	         	<span id="ansTest">&nbsp;</span>
+	         </div>
+				
 				
 			</div>
 			<ul class="button">
-				<li><input type="button" value="上一题"></li>
-				<li><input type="button" value="下一题"></li>
+				<?php echo $this->paginationControl($this->paginator_choose,
+                'Elastic',//页码样式 
+                'index/pagination_control3.phtml'//页码模板
+                );
+              ?>
+				<!-- <li><input type="button" value="上一题"></li>
+				<li><input type="button" value="下一题"></li> -->
 			</ul>
 		</div>
 	</div>
-
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+	 <script type="text/javascript" src="/js/test.js"></script>
 </body>
+</html>

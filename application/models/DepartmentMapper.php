@@ -30,7 +30,7 @@ class Application_Model_DepartmentMapper
 	public function findAllDept()
 	{
 		$arr = $this->db->fetchAll()->toArray();
-		if(count(arr) > 0){
+		if($arr){
 	    	return $arr;
 	    }else{
 	    	return null;

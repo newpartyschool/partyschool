@@ -1,4 +1,4 @@
-$('#editTimu').bind('click',function(){
+$('.editTimu').bind('click',function(){
 
 	var qeid = $(this).attr("qeid"),
 		timu = $(this).attr("timu"),
@@ -44,6 +44,8 @@ $('#editTimu').bind('click',function(){
 
 					if(msg>0)alert('更新题目成功');
 					window.location.reload();
+
+
 
 				}
 			});

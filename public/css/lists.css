@@ -1,6 +1,6 @@
 
 #content{
-	
+	width:100%;
 	position: absolute;
 	top:8%;
 	color: red;
@@ -17,24 +17,25 @@
 	display: inline-block;
 }
 #content dt,dd{
-	line-height: 7vw;
+	line-height: 2em;
 	text-align: center;
 }
 #content dl{
+	width:100%;
 	border-bottom: 1px solid black;
 	border-top:1px solid black;
 }
 #content dl dt{
-	
-	width: 24%;
+	width: 40%;
 	float: left;
 	font-size: 3vw;
 }
-#content dd{
-	width: 76%;
+#content dl dd{
+	width: 60%;
 	float: right;
-	font-size: 4.5vw;
+	font-size: 3vw;
 	text-align: left;
+	overflow:hidden;
 }
 #content dd,dt{
 	

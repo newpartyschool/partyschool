@@ -23,15 +23,47 @@
 			<div class="con-title">
 				<h2>党校报名注册</h2>
 			</div>
-			<form action="">
-			<input class="form-control height-input" type="text" placeholder="学号" required>
-			<input class="form-control height-input" type="text" placeholder="姓名" required>
-			<input class="form-control height-input" type="text" placeholder="性别" required>
-			<input class="form-control height-input" type="text" placeholder="学院名称" required>
-			<input class="form-control height-input" type="text" placeholder="党校班级名称" required>
-			<input class="form-control height-input" type="number" placeholder="手机号码" required>
+			<form action="" method="post">
+			<input class="form-control height-input" type="text" name="stuid" placeholder="学号" required>
+			<input class="form-control height-input" type="text" name="stuname" placeholder="姓名" required>
+			<!-- <input  type="text" placeholder="性别" required> -->
+			<select class="form-control height-input" name="sex">
+			    <option value="" disabled selected style="display:none;"> -- 性别 -- </option>
+				<option value="男">男</option>
+				<option value="女">女</option>
+			</select>
+			<select class="form-control height-input" name="periodsnum">
+			    <option value="" disabled selected style="display:none;"> -- 期数 -- </option>
+			    <?php
+			      for ($i=51; $i <= 100; $i++)
+			      {
+			      	echo '<option value="'.$i.'">'.$i.'</option>';
+			      }
+			    ?>
+			</select>
+			<select class="form-control height-input" name="campus">
+			    <option value="" disabled selected style="display:none;"> -- 校区 --</option>
+			    <option>翡翠湖校区</option>
+			    <option>屯溪路校区</option>
+			</select>
+			<select class="form-control height-input" name="depid">
+			    <option disabled selected style="display:none;"> -- 学院 -- </option>
+			    <?php
+			       for ($i=1; $i < 20; $i++)
+			       {
+			       	 echo "<option value='".$this->depart[$i]['depid']."'>".$this->depart[$i]['depname']."</option>";
+			       }
+			    ?>
+			</select>
+			<select class="form-control height-input" name="classtype">
+			    <option value="" selected disabled  style="display:none;"> -- 班级类别 -- </option>
+			    <option >积极分子班</option>
+			    <option >党员班</option>
+			</select>
+			<input class="form-control height-input" type="number" placeholder="手机号码" name="phone" required>
 			<button class="btn btn-primary btn-lg btn-block btn-login" type="submit">党校报名</button>
 		</form>
+		<a href="/index">返回首页</a>
 		</div>
 	</body>
 </html>

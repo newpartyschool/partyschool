@@ -7,7 +7,7 @@ $('.editTimu').bind('click',function(){
 		ansC = $(this).attr("ansC"),
 		ansD = $(this).attr("ansD"), 
 	rightAns = $(this).attr("rightAns");
-	var editTmContent = '<form><label for="timu">题目：</label><input class="timu" type="text" class="form-control" style="width:480px;" value="'+timu+'" ><label for="">选项：</label><input class="ansA" type="text" class="form-control" value="'+ansA+'" placeholder="请输入选项A"><br><input class="ansB" type="text" class="form-control" value="'+ansB+'" placeholder="请输入选项B"><br><input class="ansC" type="text" class="form-control" value="'+ansC+'" placeholder="请输入选项C"><br><input class="ansD" type="text" class="form-control" value="'+ansD+'" placeholder="请输入选项D"><br><label for="timu">答案：</label><input class="rightAns" type="text" class="form-control" value="'+rightAns+'" placeholder="如：答案：（A）"></form>';
+	var editTmContent = '<form><label for="timu">题目：</label><input id="timu" type="text" class="form-control" style="width:480px;" value="'+timu+'" ><label for="">选项：</label><input id="ansA" type="text" class="form-control" value="'+ansA+'" placeholder="请输入选项A"><br><input id="ansB" type="text" class="form-control" value="'+ansB+'" placeholder="请输入选项B"><br><input id="ansC" type="text" class="form-control" value="'+ansC+'" placeholder="请输入选项C"><br><input id="ansD" type="text" class="form-control" value="'+ansD+'" placeholder="请输入选项D"><br><label for="timu">答案：</label><input id="rightAns" type="text" class="form-control" value="'+rightAns+'" placeholder="如：答案：（A）"></form>';
 	artDialog(
 	{
 		id:'question-form',
@@ -18,12 +18,12 @@ $('.editTimu').bind('click',function(){
 	
 
 	function(){
-		var timu = $('.timu').val(),
-			ansA = $('.ansA').val(),
-			ansB = $('.ansB').val(),
-			ansC = $('.ansC').val(),
-			ansD = $('.ansD').val(), 
-			rightAns = $('.rightAns').val();
+		var timu = $('#timu').val(),
+			ansA = $('#ansA').val(),
+			ansB = $('#ansB').val(),
+			ansC = $('#ansC').val(),
+			ansD = $('#ansD').val(), 
+			rightAns = $('#rightAns').val();
 		if (timu=="" || ansA == "" || ansB == "" || ansC == "" || ansD =="" || rightAns =="") {
 			alert('题目相关数据都不能为空');
 			return false;

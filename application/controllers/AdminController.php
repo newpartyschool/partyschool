@@ -13,7 +13,7 @@ class AdminController extends Zend_Controller_Action
 	 public function dxzjAction()
 	 {
 	 	$session = new Zend_Session_Namespace('user');
-	 	$this->realname = $session->realname;
+	 	$this->view->realname = $session->realname;
 	 	if (isset($session->depid)&&$session->depid != 1)
 	 	{
 	 		// 获取班级数据
@@ -54,7 +54,7 @@ class AdminController extends Zend_Controller_Action
 	 		}
 
 	 		///学员信息输出
-	 		$stuMapper = new Application_Model_StuMapper();
+	 		$stuMapper = new Application_Model_StudentMapper();
 	 		$order = "stno DESC";
 	 		$where = array('classid' => $classid);
 	 		$limit = null;
@@ -169,9 +169,18 @@ class AdminController extends Zend_Controller_Action
 	 		7 => array('测试1','2013214431','本科','11111111111','非优秀','未毕业','80'),
 	 		8 => array('测试1','2013214621','本科','11111111111','非优秀','未毕业','90')
 	 		);
-	 	$xls->addArray($data);
-	 	// $xlsname = "第".$periodnum."期".$depname."党校总结基本信息汇总";
-	 	$xls->generateXML(date('Ymd'));
+
+	 		if (!empty($data))
+	 		{
+	 			$xls->addArray($data);
+	 			// $xlsname = "第".$periodnum."期".$depname."党校总结基本信息汇总";
+	 			$xls->generateXML(date('Ymd'));
+	 		}
+	 		else
+	 		{
+	 			exit;
+	 		}
+	 		
 	 	}
 	 	else
 	 	{

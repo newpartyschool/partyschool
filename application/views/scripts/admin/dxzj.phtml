@@ -51,10 +51,10 @@
         <label>班级：</label>
         <span><?php echo $this->classtype;?></span>
 
-        <button type="button" class="btn btn-info" id="product-excel">生成excel</button>
+        <a class="btn btn-info" href="/admin/xls">生成excel</a>
     </div>
     <div class="main-content">
-      <!-- <form> -->
+      <div class="main-info">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -121,7 +121,7 @@
           </ul>
         </div>
         <button type="button" class="btn btn-danger" id="all-del">一键删除</button>
-      <!-- </form> -->
+      </div>
        <!-- 优秀学员 -->
         <div class="students-yx info">
           <label for="st-yx">优秀学员姓名（人数占所带学生总人数10%）</label>

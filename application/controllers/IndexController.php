@@ -4,14 +4,14 @@ class IndexController extends Zend_Controller_Action
 {
     public function init()
     {
-       // $user_agent = $_SERVER['HTTP_USER_AGENT'];
-       // if (strpos($user_agent, 'MicroMessenger') === false)
-       // {
-       //   echo "<h1>请用微信客户端打开</h1>";
-       //   exit;
-       // }
-       // else
-       // {
+       $user_agent = $_SERVER['HTTP_USER_AGENT'];
+       if (strpos($user_agent, 'MicroMessenger') === false)
+       {
+         echo "<h1>请用微信客户端打开</h1>";
+         exit;
+       }
+       else
+       {
           $session = new Zend_Session_Namespace('dyuser');
           if (isset($_GET['k']) && !empty(trim($_GET['k'])) || isset($session->userid))
           {
@@ -91,7 +91,7 @@ class IndexController extends Zend_Controller_Action
             exit;
           }
 
-       // }
+       }
     }
 
     public function indexAction()

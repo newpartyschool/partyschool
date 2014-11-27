@@ -84,3 +84,12 @@ body{
 .pagination a.current:hover {
 				text-decoration: underline;
                 }
+
+/***************************************/
+#changeTiku{
+	width:500px;
+}
+#changeTiku input{
+	width:400px;
+	margin:5px 0 5px 0;
+}

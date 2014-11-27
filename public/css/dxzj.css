@@ -24,3 +24,18 @@
 .main-container form .st-name{
 	width: 30%;
 }
+.main-container .table td{
+	line-height:40px;
+}
+#addForm{
+	width:400px;
+
+}
+#addForm label{
+	line-height: 30px;
+	margin-right: 50px;
+}
+#addForm input[type=radio]{
+	margin-right: 10px;
+	line-height: 30px;
+}

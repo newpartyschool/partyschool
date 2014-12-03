@@ -19,73 +19,13 @@ $('#all-del').bind('click',function(){
 	artDialog(
 		{
 			title:'删除提示',
-			content:'确定要删除选中项',
-			fixed:true,
+			content:'确定要删除选中项'
 		},
 		function(){
-			var del=[],i=0;
-			var $tr=$('input:checkbox:checked').parent().parent();
-			
-				$tr.find('td:eq(1)').each(function(){
-					var delStuNo=$(this).text();
-					del.push(delStuNo);
-				});
-    		$tr.remove();
-    		/*ajax发送删除的数据，以学生号作为唯一标识。*/
-    		// $.ajax({
-      //       	url:'',
-      //      		type:'POST',
-      //       	data:del,
-      //       	success:function(msg){
-      //           	if(msg>0)alert('添加题目成功');
-      //       	}
-      //   	});
+			alert("以后就会把选中项一键删除");
 		},
 		function(){
 			return false;
 		}
 		);
-});
-/*优秀按钮变化*/
-$('button.youxiu').click(function(){
-    if($(this).html()=='优&nbsp;&nbsp;&nbsp;秀'){
-        $(this).html('非优秀');
-    }else if($(this).html()=='非优秀'){
-         $(this).html('优&nbsp;&nbsp;&nbsp;秀');
-    }
-    // var isgood=$(this).html();
-    // var stno=$(this).parent().parent().find('td:eq(1)').text();
-    // $.ajax({
-    //         	url:'',
-    //        		type:'POST',
-    //         	data:{
-    //         		stno:stno,
-    //         		isgood:isgood
-    //         	},
-    //         	success:function(msg){
-    //             	if(msg>0)alert('添加题目成功');
-    //         	}
-    //     	});
-});
-/*毕业按钮变化*/
-$('button.biye').click(function(){
-    if($(this).html()=='已毕业'){
-        $(this).html('非毕业');
-    }else if($(this).html()=='非毕业'){
-         $(this).html('已毕业');
-    }
-    var isgraduate=$(this).html();
-    var stno=$(this).parent().parent().find('td:eq(1)').text();
-    alert(stno);
-    // $.ajax({
-    //         	url:'',
-    //        		type:'POST',
-    //         	data:{
-    //         		stno:stno,
-    //         		isgraduate:isgraduate
-    //         	},
-    //         	success:function(msg){
-    //             	if(msg>0)alert('添加题目成功');
-    //         	}
-    //     	});
-});
+})

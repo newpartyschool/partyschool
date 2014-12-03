@@ -10,12 +10,12 @@ body{
 	display: inline-block;
 }
 
-.main-title form span{
+.main-title span, .main-title form span{
 	font-weight:bold;
 	color: #777272;
 	font-size: 16px; 
 }
-.main-title form label{
+.main-title label,.main-title form label{
 	margin-left: 23px;
 	color: #777272;
 }
@@ -41,21 +41,21 @@ body{
 	border-radius: 8px;
 	background: #FFF;
 }
-.main-content form{
+.main-content form,.main-info{
 	width: 96%;
 	margin:20px auto 15px auto;
 }
-.main-content form table{
+.main-content form table,.main-info table{
 	border-bottom: 2px solid #CCC;
 	margin-bottom: 10px;
 }
-.main-content form table tr td{
+.main-content table tr td, .main-content form table tr td{
 	line-height: 3;
 }
-.main-content form table tr td .del-icon{
+.main-content form table tr td .del-icon,.main-info table tr th img{
 	cursor: pointer;
 }
-.main-content form .btn-submit{
+.main-content form .btn-submit,.main-info .btn-submit{
 	margin-left: 80%;
 	width: 8%;
 }

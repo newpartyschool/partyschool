@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"
+"http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta name="title" content="Sign Succeed">
+	<meta name="apple-touch-fullscreen" content="YES">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<title>在线测试</title>
+	<!-- <script type="text/javascript" src="/js/choose.js"></script>
+	<script type="text/javascript" src="/js/base.js"></script> -->
+	<link href="/css/base.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="/css/test.css">
+
+</head>
+
+<body>
+	<div class = "main">
+		<img src="/images/base_bg.jpg" height="100%" width="100%"/>
+		<div id = "home">
+			<a href="../" ><img src="/images/home.jpg" height="100%" width="100%"/></a>
+		</div>
+		<div id="content">
+			<ul class="time">
+				<li>本次测试共<span>20题</span></li>
+				<li>测试间<span>20</span>分钟</li>
+				<li>剩余时间：<span>20:00</span></li>
+			</ul>
+			<div class="question" id="que">
+			<?php
+			    global $arrList;
+          		$paginator_choose=$this->paginator_choose;
+	          if ($this->paginator_choose) {
+	            foreach ($this->paginator_choose as $questionsetList) {
+	              $qeid = $questionsetList['qeid'];          
+	              $qetitle = $questionsetList['qetitle'];
+	              $ansA = $questionsetList['ansA'];
+	              $ansB = $questionsetList['ansB'];
+	              $ansC = $questionsetList['ansC'];
+	              $ansD = $questionsetList['ansD'];
+	              $ansY = $questionsetList['ansY'];
+	              echo "<form action=\"\" method=\"get\">
+	              		 <p>".$qeid."、".$qetitle."</p>
+							<ul id='qeans' data-ansy='".$ansY."''>
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansA."'/> ".$ansA."
+									</label>
+								</li>
+
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansB."'/> ".$ansB."
+									</label>
+								</li>
+
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansC."'/> ".$ansC."
+									</label>
+								</li>
+								<li>
+									<label>
+										<input class='radio-control' name=\"ans_stu\" type=\"radio\" value='".$ansD."'/> ".$ansD."
+									</label>
+								</li>
+							</ul>
+						</form>
+						";
+					}
+				}
+	         ?>
+	         <div class="ans-warn">
+	         	<span id="ansTest">&nbsp;</span>
+	         </div>
+				
+				
+			</div>
+			<ul class="button">
+				<?php echo $this->paginationControl($this->paginator_choose,
+                'Elastic',//页码样式 
+                'index/pagination_control3.phtml'//页码模板
+                );
+              ?>
+				<!-- 
+				<li><input type="button" value="下一题"></li> -->
+			</ul>
+		</div>
+	</div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+	 <script type="text/javascript" src="/js/test.js"></script>
+</body>
+</html>

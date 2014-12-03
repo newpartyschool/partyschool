@@ -24,3 +24,18 @@
 .main-container  .st-name{
 	width: 30%;
 }
+#addForm{
+	width:250px;
+}
+#addForm input[type=radio]{
+	margin-right: 12px;
+}
+#addForm input[value="女"],input[value="非优秀"]{
+	margin-left: 15px;
+}
+.youxiu,.biye{
+	width:68px;
+}
+#all-del{
+	margin-left: 700px;
+}

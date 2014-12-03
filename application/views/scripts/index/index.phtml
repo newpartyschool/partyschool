@@ -31,7 +31,7 @@
         </div>
 
         <div id = "notice">
-            <p>如果是第一次登陆，请先<a href="http://weixin.hfutonline.net/verifi.php?k=oTIKct0oS3Dg9p7T1YmGOQKSFh_o">实名认证</a>再回来哦！</p>
+            <p>如果是第一次登陆，请先<a href="http://weixin.hfutonline.net/verifi.php?k=<?php $session = new Zend_Session_Namespace('dyuser'); echo $session->userid;?>">实名认证</a>再回来哦！</p>
             <?php 
                // echo $this->yes;
                // $session = new Zend_Session_Namespace('dyuser');

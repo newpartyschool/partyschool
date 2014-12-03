@@ -20,7 +20,7 @@
 	<div class = "main">
 		<img src="/images/base_bg.jpg" height="100%" width="100%"/>
 		<div id = "home">
-			<a href="/index" ><img src="/images/home.jpg" height="100%" width="100%"/></a>
+			<a href="../" ><img src="/images/home.jpg" height="100%" width="100%"/></a>
 		</div>
 		<div id="content">
 			<ul class="time">
@@ -42,7 +42,7 @@
 	              $ansD = $questionsetList['ansD'];
 	              $ansY = $questionsetList['ansY'];
 	              echo "<form action=\"\" method=\"get\">
-	              		 <p>".$this->pages."、".$qetitle."</p>
+	              		 <p>".$qeid."、".$qetitle."</p>
 							<ul id='qeans' data-ansy='".$ansY."''>
 								<li>
 									<label>
@@ -84,7 +84,7 @@
                 'index/pagination_control3.phtml'//页码模板
                 );
               ?>
-				<!-- <li><input type="button" value="上一题"></li>
+				<!-- 
 				<li><input type="button" value="下一题"></li> -->
 			</ul>
 		</div>

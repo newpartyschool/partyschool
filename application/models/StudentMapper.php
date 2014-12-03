@@ -47,7 +47,7 @@ class Application_Model_StudentMapper
 	}
 
 	// 存贮学员数据
-	public function saveStuinfo($stno,$name,$sex,$depname,$major,$type,$getclasstype,$classid,$getphone)
+	public function saveStuinfo($stno,$name,$sex,$depname,$major,$type,$getclasstype,$classid,$getphone,$isgood,$isgraduate)
 	{
 		$ab = $this->db->getAdapter();
 		$where = $ab->quoteInto('stno =?',$stno);
@@ -55,8 +55,6 @@ class Application_Model_StudentMapper
 		if (empty($result))
 		{
 			$grade = 0;
-			$isgood = 0;
-			$isgraduate = 0;
 			$arr = array(
 						 'stno'=>$stno,
 						 'name'=>$name,

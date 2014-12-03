@@ -23,66 +23,35 @@ class IndexController extends Zend_Controller_Action
             {
               $info = $session->userid;
             }
-          
+
+            $Periodset = new Application_Model_PeriodsetMapper();
+            $periodsetnum = $Periodset->findPeriod();
+            $this->periodnum = $periodsetnum[0]['periodnum'];
+            $this->periodstart = $periodsetnum[0]['enrollstart'];
+            $this->periodend = $periodsetnum[0]['enrollend'];
+
+            $this->isverifiinfo = 0;
+            $this->isregister = 0;
+
             $session = new Zend_Session_Namespace('dyuser');
             $session->userid = $info;
-            $stuMapper = new Application_Model_StuMapper();
-            $arr = $stuMapper->Queryusername($session->userid);//查询FromUsername是否关注
-            if (!empty($arr))
-            {
-              $isverifi = $arr[0]['isverifi'];
-              // 是否实名认证
-              if ($isverifi == 1)
-              {
-                // 根据Fromusername查询学号、手机号
-                $StuverifiMapper = new Application_Model_StuverifiMapper();
-                $verifiInfo = $StuverifiMapper->Getstuverifi($session->userid);
-                if ($verifiInfo)
-                {
-                  $this->stuid = $verifiInfo['studentid']; //学号
-                  $this->phone = $verifiInfo['phone'];//手机号
-                  // echo $stuid;
 
-                  $this->isregister = 0;
-                  // 判断是否已经报名
-                  $partyStuMapper = new Application_Model_StudentMapper();
-                  $partystu = $partyStuMapper->getStuByid($this->stuid);
-                  if($partystu)
-                  {
-                    $this->isregister = 1;
-                  }
-                  else
-                  {
-                    // // 根据学号查询详细信息
-                    // $Studentinfo = new Application_Model_StudentinfoMapper();
-                    // $res = $Studentinfo->Getstudentinfo($stuid);
-                    // $stu = $res['stuname'];
-                    // // $sexinfo = $res['sex'];
-                    // // if ($sexinfo == 1)
-                    // // {
-                    // //   $sex = "女";
-                    // // }
-                    // // else
-                    // // {
-                    // //   $sex = "男";
-                    // // }
-                    // $depart = $res['depart'];
-                    // $this->class = $res['class'];
-                    // $this->type = $res['type'];
-                    // echo $stuid.$stuname.$sex.$depart.$class.$phone;
-                  } 
-                }
-              }
-              else
-              {
-                echo "<h1>亲，先去<a href='http://weixin.hfutonline.net/verifi.php?k=".$session->userid."'>实名认证</a>回来才能报名哦</h1>";
-                exit;
-              }
-            }
-            else
+            // 根据Fromusername查询学号、手机号
+            $StuverifiMapper = new Application_Model_StuverifiMapper();
+            $verifiInfo = $StuverifiMapper->Getstuverifi($session->userid);
+            if ($verifiInfo)
             {
-              echo "<h1>请先关注我们的公众号：微信合工大</h1>";
-              exit;
+              $this->isverifiinfo = 1;
+              $this->stuid = $verifiInfo['studentid']; //学号
+              $this->phone = $verifiInfo['phone'];//手机号
+
+              // 判断是否已经报名
+              $partyStuMapper = new Application_Model_StudentMapper();
+              $partystu = $partyStuMapper->getStuByid($this->stuid);
+              if($partystu)
+              {
+                $this->isregister = 1;
+              }
             }
           }
           else
@@ -91,7 +60,7 @@ class IndexController extends Zend_Controller_Action
             exit;
           }
 
-       // }
+       // } 
     }
 
     public function indexAction()
@@ -100,83 +69,85 @@ class IndexController extends Zend_Controller_Action
 
     public function registerAction()
     {
-      $periodnum = "53";
-      if ($this->isregister == 0)
+      if ($this->isverifiinfo == 0)
       {
-       if ($periodnum >= 52)//模拟最新一期时间判断是否可以报名
-       {
-        // 输出学院选择
-        $departMapper = new Application_Model_DepartmentMapper();
-        $depart = $departMapper->findAlldept();
-        $this->view->depart = $depart;
-
-        // 接受表单数据
-        if ($_POST)
+        $this->_redirect('/index/statuserror');
+      }
+      else
+      {
+        if ($this->isregister == 0)
         {
-          // 根据学号查询详细信息
-          $Studentinfo = new Application_Model_StudentinfoMapper();
-          $res = $Studentinfo->Getstudentinfo($this->stuid);
-          $stu = $res['stuname'];
-          $depart = $res['depart'];
-          $this->class = $res['class'];
-          $this->type = $res['type'];
-
-          $getstuid = strip_tags(trim($this->getRequest()->getParam('stuid')));
-          $getstuname = strip_tags(trim($this->getRequest()->getParam('stuname')));
-          $getsex = strip_tags(trim($this->getRequest()->getParam('sex')));
-          $getperiodsnum = strip_tags(trim($this->getRequest()->getParam('periodsnum')));
-          $getcampus = strip_tags(trim($this->getRequest()->getParam('campus')));
-          $getdepid = strip_tags(trim($this->getRequest()->getParam('depid')));
-          $getclasstype = strip_tags(trim($this->getRequest()->getParam('classtype')));
-          $getphone = strip_tags(trim($this->getRequest()->getParam('phone')));
-
-          // echo "<script>alert('".$getstuid."/".$getstuname."/".$getsex."/".$getperiodsnum."/".$getdepid."/".$this->type."/".$getclasstype."/".$getphone."/".$this->stuid."');</script>";
-
-          if (!empty($getstuid)&&!empty($getstuname)&&!empty($getsex)&&!empty($getperiodsnum)&&!empty($getcampus)&&!empty($getdepid)&&!empty($getclasstype)&&!empty($getphone)&&$getstuid == $this->stuid)
+          //判断是否在报名日期内
+          if ($this->periodstart <= date('Y-m-d') && date('Y-m-d') <= $this->periodend)
           {
+            // 输出学院选择
             $departMapper = new Application_Model_DepartmentMapper();
-            $departname = $departMapper->findDept($getdepid);
-            $depart = $departname[0]['depname'];
-            $major = $this->class;
-            $type = $this->type;
+            $depart = $departMapper->findAlldept();
+            $this->view->depart = $depart;
 
-            // 获取classid
-            $ClassMapper = new Application_Model_ClassMapper();
-            $classinfo = $ClassMapper->getClassid($getclasstype,$getperiodsnum,$getdepid,$getcampus);
-            $classid = $classinfo[0]['classid'];
-
-            // echo "<script>alert('".$getstuid."/".$getstuname."/".$getsex."/".$depart."/".$major."/".$type."/".$getclasstype."/".$classid."/".$getphone."/".$getcampus."');</script>";
-
-            // 记录数据
-            $partyStuMapper = new Application_Model_StudentMapper();
-            $partysave = $partyStuMapper->saveStuinfo($getstuid,$getstuname,$getsex,$depart,$major,$type,$getclasstype,$classid,$getphone);
-            if($partysave)
+            if ($_POST)
             {
-              echo "<script>alert('报名成功，现在去学习吧');location.href='/index';</script>";
-            }
-            else
-            {
-              echo "<script>alert('一定是报名方式不对，让我们重新来过吧')</script>";
+              // 根据学号查询详细信息
+              $Studentinfo = new Application_Model_StudentinfoMapper();
+              $res = $Studentinfo->Getstudentinfo($this->stuid);
+              $stu = $res['stuname'];
+              $depart = $res['depart'];
+              $this->class = $res['class'];
+              $this->type = $res['type'];
+
+              $getstuid = strip_tags(trim($this->getRequest()->getParam('stuid')));
+              $getstuname = strip_tags(trim($this->getRequest()->getParam('stuname')));
+              $getsex = strip_tags(trim($this->getRequest()->getParam('sex')));
+              $getperiodsnum = strip_tags(trim($this->getRequest()->getParam('periodsnum')));
+              $getcampus = strip_tags(trim($this->getRequest()->getParam('campus')));
+              $getdepid = strip_tags(trim($this->getRequest()->getParam('depid')));
+              $getclasstype = strip_tags(trim($this->getRequest()->getParam('classtype')));
+              $getphone = strip_tags(trim($this->getRequest()->getParam('phone')));
+
+              if (!empty($getstuid)&&!empty($getstuname)&&!empty($getsex)&&!empty($getperiodsnum)&&!empty($getcampus)&&!empty($getdepid)&&!empty($getclasstype)&&!empty($getphone)&&$getstuid == $this->stuid)
+              {
+                $departMapper = new Application_Model_DepartmentMapper();
+                $departname = $departMapper->findDept($getdepid);
+                $depart = $departname[0]['depname'];
+                $major = $this->class;
+                $type = $this->type;
+
+                // 获取classid
+                $ClassMapper = new Application_Model_ClassMapper();
+                $classinfo = $ClassMapper->getClassid($getclasstype,$getperiodsnum,$getdepid,$getcampus);
+                $classid = $classinfo[0]['classid'];
+                $isgood = 0;
+                $isgraduate = 0;
+
+                // 记录数据
+                $partyStuMapper = new Application_Model_StudentMapper();
+                $partysave = $partyStuMapper->saveStuinfo($getstuid,$getstuname,$getsex,$depart,$major,$type,$getclasstype,$classid,$getphone,$isgood,$isgraduate);
+                if($partysave)
+                {
+                  echo "<script>alert('报名成功，现在去学习吧');location.href='/index';</script>";
+                }
+                else
+                {
+                  echo "<script>alert('一定是报名方式不对，让我们重新来过吧')</script>";
+                }
+              }
+              else
+              {
+                echo "<script>alert('注册信息填写有误');</script>";
+              }
             }
           }
           else
           {
-            echo "<script>alert('注册信息填写有误');</script>";
+            $this->_redirect("index/registration");
           }
         }
+        else
+        {
+          echo "<script>alert('亲，你报过名了吧，去学习吧！');location.href='/index';</script>";
+          exit;
+        }
       }
-      else
-      {
-        $this->_redirect("index/registration");
-      }
-     }
-     else
-     {
-        echo "<script>alert('亲，你报过名了吧，去学习吧！');location.href='/index';</script>";
-        exit;
-     }
-      
-
     }
     
     public function registrationAction()
@@ -198,11 +169,10 @@ class IndexController extends Zend_Controller_Action
     {
       if ($this->isregister == 1)//判断是否报名
       {
-        //获取第几期~~
        $selectedquestionMapper = new Application_Model_SelectedquestionMapper();
        $where =1;
        $same = $selectedquestionMapper->findSelectedquestionById(2);
-      foreach($same as $key=>$values) {
+       foreach($same as $key=>$values) {
           $qeid = $values['qeid'];
           $queupdateMapper = new Application_Model_QueupdateMapper();
         $arr= $queupdateMapper->findQueupdateById($qeid);
@@ -223,7 +193,7 @@ class IndexController extends Zend_Controller_Action
      }
      else
      {
-       echo '<script>alert("亲，你报名了没？");location.href="/index";</script>';
+       $this->_redirect('/index/statuserror');
        exit;
      }
 
@@ -240,7 +210,7 @@ class IndexController extends Zend_Controller_Action
       }
       else
       {
-        echo '<script>alert("亲，你报名了没？");location.href="/index";</script>';
+        $this->_redirect('/index/statuserror');
         exit;
       }
     }
@@ -258,5 +228,9 @@ class IndexController extends Zend_Controller_Action
     public function warningAction()
     {
         
+    }
+
+    public function statuserrorAction()
+    {
     }
 }

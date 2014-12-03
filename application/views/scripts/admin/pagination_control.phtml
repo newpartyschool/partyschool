@@ -5,24 +5,24 @@
 	    $periodnum = $_GET["periodnum"];
 	    $testtime = $_GET["testtime"];
 	    $timunum = $_GET["timunum"];
+	    $page_url = "?&periodnum=".$periodnum."&testtime=".$testtime."&timunum=".$timunum;
 	}else{
-		$periodnum = '';
-        $testtime = '';
-        $timunum = '';
+		$page_url = "";
     }
+    
 		if ($this->previous==1)
 			$tmp = $this->url(array('page'=>null));
 		else
 			$tmp = $this->url(array('page'=>$this->previous));
 		if($this->previous!=null)
 
-			echo "<li><a href=\"$tmp?&periodnum=".$periodnum."&testtime=".$testtime."&timunum=".$timunum."\">&laquo; 上一页</a></li>";
+			echo "<li><a href=\"$tmp".$page_url."\">&laquo; 上一页</a></li>";
 		else
 			echo "&laquo; 上一页";
 
 		$tmp = $this->url(array('page'=>$this->next));
 		if($this->next!=null)
-			echo "<li><a href=\"$tmp?&periodnum=".$periodnum."&testtime=".$testtime."&timunum=".$timunum."\">下一页 &raquo;</a></li>";
+			echo "<li><a href=\"$tmp".$page_url."\">下一页 &raquo;</a></li>";
 		else
 			echo "下一页 &raquo;";
 	

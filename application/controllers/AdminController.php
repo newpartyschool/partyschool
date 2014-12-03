@@ -75,6 +75,83 @@ class AdminController extends Zend_Controller_Action
 	 		exit;
 	 	}
 	 }
+
+	 /**
+	  * 班主任添加学员
+	  * @return [type] [description]
+	  */
+
+	 public function addstuAction()
+	 {
+	 	$session = new Zend_Session_Namespace('user');
+	 	if (isset($session->depid) && $session->depid != 1)
+	 	{
+	 		$stuNo = strip_tags(trim($this->getRequest()->getParam('stuNo')));
+	 		$stuName = strip_tags(trim($this->getRequest()->getParam('stuName')));
+	 		$stuTel = strip_tags(trim($this->getRequest()->getParam('stuTel')));
+	 		$stuGender = strip_tags(trim($this->getRequest()->getParam('stuGender')));
+	 		$isGood = strip_tags(trim($this->getRequest()->getParam('isGood')));
+	 		$isGradute = strip_tags(trim($this->getRequest()->getParam('isGradute')));
+	 		if ($_POST)
+	 		{
+	 		 if (!empty($stuNo) && !empty($stuName) && !empty($stuTel) && !empty($stuGender) && !empty($isGood) && !empty($isGradute))
+	 		 {
+	 		 	$StudentMapper = new Application_Model_StudentMapper();
+	 		 	$arr = $StudentMapper->getStuByid($stuNo);
+	 		 	if ($arr)
+	 		 	{
+	 		 		$msg = 0;//已存在该学生
+	 		 	}
+	 		 	else
+	 		 	{
+	 		 	  $StudentinfoMapper = new Application_Model_StudentinfoMapper();
+	 		 	  $res = $StudentinfoMapper->Getstudentinfo($stuNo);
+	 		 	  if (empty($res))
+	 		 	  {
+	 				$msg = 1;//学号不存在
+	 			  }
+	 			  else
+	 			  {
+	 				 // 获取班级数据
+	 				$teacher = $session->realname;
+	 				$ClassMapper = new Application_Model_ClassMapper();
+	 				$classinfo = $ClassMapper->findClassInfo($teacher);
+	 				$classid = $classinfo[0]['classid'];
+	 				$depid = $classinfo[0]['depid'];
+	 				$classtype =$classinfo[0]['classtype'];
+
+	 				//查询学院信息
+	 				$DepartmentMapper = new Application_Model_DepartmentMapper();
+	 				$depInfo = $DepartmentMapper->findDept($depid);
+	 				$depname = $depInfo[0]['depname'];
+
+	 				//获取$type $major
+	 				$major = $res['class'];
+	 				$type = $res['type'];
+
+	 				// 后台添加数据
+	 				$StudentMapper = new Application_Model_StudentMapper();
+	 				$student = $StudentMapper->saveStuinfo($stuNo,$stuName,$stuGender,$depname,$major,$type,$classtype,$classid,$stuTel,$isGood,$isGradute);
+	 				if ($student)
+	 				{
+	 					$msg = 2;//添加成功
+	 				}
+	 				else
+	 				{
+	 					$msg = 3;//学号存在但添加不成功
+	 				}
+	 			   }
+	 			}
+	 		  }
+	 		  else
+	 		  {
+	 			$msg = 4;//提交数据不全
+	 		  }
+	 		  $this->view->result =$msg;//返回状态参数
+	 		}
+	 	}
+	 }
+
 	 /**
 	  * 个人信息修改控制
 	  * @return [type] [description]

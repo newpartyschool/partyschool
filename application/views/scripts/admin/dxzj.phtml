@@ -51,14 +51,14 @@
         <label>班级：</label>
         <span><?php echo $this->classtype;?></span>
 
-        <a class="btn btn-info" href="/admin/xls">生成excel</a>
+        <a href="/admin/xls" class="btn btn-info">生成excel</a>
     </div>
     <div class="main-content">
-      <div class="main-info">
+      <!-- <form> -->
         <table class="table table-hover">
           <thead>
             <tr>
-              <th><img src="/images/add.png" alt="添加新学员"></th>
+              <th><img src="/images/add.png" alt="添加新学员" id="addXueyuan"></th>
               <th>学号</th>
               <th>姓名</th>
               <th>手机号码</th>
@@ -79,6 +79,10 @@
                   $stuphone = $stuList['phonenum'];
                   $sex = $stuList['sex'];
                   $score = $stuList['grade'];
+                  if ($score == '')
+                  {
+                    $score = "暂无成绩";
+                  }
                   $isgood = "非优秀";
                   $isgraduate = "非毕业";
                   if ($stuList['isgood'] == 1)
@@ -95,8 +99,8 @@
                   echo "<td>{$stuname}</td>";
                   echo "<td>{$stuphone}</td>";
                   echo "<td>{$sex}</td>";
-                  echo '<td><button class="btn btn-default youxiu">'.$isgood.'</button></td>';
-                  echo '<td><button class="btn btn-default biye">'.$isgraduate.'</button></td>';
+                  echo '<td><button class="btn btn-default youxiu" id="'.$stno.'">'.$isgood.'</button></td>';
+                  echo '<td><button class="btn btn-default biye" id="'.$stno.'">'.$isgraduate.'</button></td>';
                   echo "<td>{$score}</td>";
                   echo "</tr>";
                 }
@@ -121,7 +125,7 @@
           </ul>
         </div>
         <button type="button" class="btn btn-danger" id="all-del">一键删除</button>
-      </div>
+      <!-- </form> -->
        <!-- 优秀学员 -->
         <div class="students-yx info">
           <label for="st-yx">优秀学员姓名（人数占所带学生总人数10%）</label>
@@ -160,5 +164,6 @@
 	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/js/artDialog.js"></script>
   <script type="text/javascript" src="/js/dangxiaozongjie.js"></script>
+  <script type="text/javascript" src="/js/xueyuanChange.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@ $('#addTimu').bind('click',function(){
 		title:'添加题目',
 		content:addTmContent,
 		yesText:'添加',
+		fixed:true
 	},
 	function(){
 		var timu = $('#timu').val(),

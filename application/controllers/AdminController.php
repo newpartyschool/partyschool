@@ -55,11 +55,11 @@ class AdminController extends Zend_Controller_Action
 	 		}
 
 	 		///学员信息输出
-	 		$stuMapper = new Application_Model_StudentMapper();
+	 		$StudentMapper = new Application_Model_StudentMapper();
 	 		$order = "stno DESC";
 	 		$where = array('classid' => $classid);
 	 		$limit = null;
-	 		$arrList = $stuMapper->getStuinfo($where,$order,$limit);
+	 		$arrList = $StudentMapper->getStuinfo($where,$order,$limit);
 
 	 		// $this->view->arrList = $arrList;
 	 		$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
@@ -151,11 +151,6 @@ class AdminController extends Zend_Controller_Action
 	 		  $this->view->result =$msg;//返回状态参数
 	 		}
 	 	}
-	 	else
-	 	{
-	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
-	 		exit;
-	 	}
 	 }
 
 	 /**
@@ -165,7 +160,7 @@ class AdminController extends Zend_Controller_Action
 	 public function delstuAction()
 	 {
 	 	$session = new Zend_Session_Namespace('user');
-	 	if (isset($session->depid) && $session->depid != 1)
+	 	if (isset($session->depid))
 	 	{
 	 		if ($_POST)
 	 		{
@@ -189,11 +184,6 @@ class AdminController extends Zend_Controller_Action
 	 			}
 	 		}
 	 	}
-	 	else
-	 	{
-	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
-	 		exit;
-	 	}
 	 }
 
 	 /**
@@ -203,7 +193,7 @@ class AdminController extends Zend_Controller_Action
 	 public function changestatusAction()
 	 {
 	 	$session = new Zend_Session_Namespace('user');
-	 	if (isset($session->depid) && $session->depid != 1)
+	 	if (isset($session->depid))
 	 	{
 	 		if ($_POST)
 	 		{
@@ -268,11 +258,6 @@ class AdminController extends Zend_Controller_Action
 	 				$this->view->statusmsg = '0';
 	 			}
 	 		}
-	 	}
-	 	else
-	 	{
-	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
-	 		exit;
 	 	}
 	 }
 
@@ -500,7 +485,47 @@ class AdminController extends Zend_Controller_Action
 	 	$session = new Zend_Session_Namespace('user');
 	 	if (isset($session->depid) && $session->depid == 1)
 	 	{
+	 		// 输出学院选择
+            $departMapper = new Application_Model_DepartmentMapper();
+            $depart = $departMapper->findAlldept();
+            $this->view->depart = $depart;
+            if ($_GET)
+            {
+            	$periodnum = strip_tags(trim($_GET['periodnum']));
+            	$campus = strip_tags(trim($_GET['xiaoqu']));
+            	$depid = strip_tags(trim($_GET['xueyuan']));
+            	$classtype = strip_tags(trim($_GET['banji']));
+            	if (!empty($periodnum) && !empty($campus) && !empty($depid) && !empty($classtype))
+            	{
+            		//查询班级ID
+            		$campus = $campus."校区";
+            		$ClassMapper = new Application_Model_ClassMapper();
+            		$classinfo = $ClassMapper->getClassid($classtype,$periodnum,$depid,$campus);
+            		$classid = $classinfo[0]['classid'];
 
+            		// 获取党校总结数据
+            		$ClassummaryMapper = new Application_Model_ClassummaryMapper();
+            		$dxInfo  = $ClassummaryMapper->dxzjdata($classid);
+            		$this->view->xysz    = $dxInfo['xysz'];
+            		$this->view->study   = $dxInfo['study'];
+            		$this->view->taolun  = $dxInfo['taolun'];
+            		$this->view->shijian = $dxInfo['shijian'];
+
+            		//获取学员信息
+            		$StudentMapper = new Application_Model_StudentMapper();
+            		$order = "stno DESC";
+            		$where = array('classid' => $classid);
+            		$limit = null;
+            		$arrList = $StudentMapper->getStuinfo($where,$order,$limit);
+
+            		$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
+            		$paginator_studentinfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+            		$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的学生信息数目
+            		$paginator_studentinfo->setCurrentPageNumber($page); //设置第一页显示
+            		$paginator_studentinfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+            		$this->view->paginator_studentinfo = $paginator_studentinfo;
+            	}
+            }
 	 	}
 	 	else
 	 	{

@@ -9,6 +9,17 @@
 	}else{
 		$page_url = "";
     }
+    if (!empty($_GET["periodnum"])&!empty($_GET["xiaoqu"])&!empty($_GET["xueyuan"])&!empty($_GET["banji"]))
+    {
+    	$periodnum = $_GET['periodnum'];
+    	$campus = $_GET['xiaoqu'];
+    	$depid = $_GET['xueyuan'];
+    	$classtype = $_GET['banji'];
+    	$page_url = "?&periodnum=".$periodnum."&xiaoqu=".$campus."&xueyuan=".$depid."&banji=".$classtype;
+    }else
+    {
+    	$page_url = '';
+    }
     
 		if ($this->previous==1)
 			$tmp = $this->url(array('page'=>null));

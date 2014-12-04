@@ -4,7 +4,7 @@ class IndexController extends Zend_Controller_Action
 {
     public function init()
     {
-       // $user_agent = $_SERVER['HTTP_USER_AGENT'];
+       // $user_agent = $_SERVER['HTTP_USER_AGENT'];//判断是否由微信客户端打开
        // if (strpos($user_agent, 'MicroMessenger') === false)
        // {
        //   echo "<h1>请用微信客户端打开</h1>";
@@ -12,6 +12,7 @@ class IndexController extends Zend_Controller_Action
        // }
        // else
        // {
+          // 接受微信用户FromUserName或者从session调用
           $session = new Zend_Session_Namespace('dyuser');
           if (isset($_GET['k']) && !empty(trim($_GET['k'])) || isset($session->userid))
           {
@@ -24,12 +25,14 @@ class IndexController extends Zend_Controller_Action
               $info = $session->userid;
             }
 
+            // 获取最新期数
             $Periodset = new Application_Model_PeriodsetMapper();
             $periodsetnum = $Periodset->findPeriod();
             $this->periodnum = $periodsetnum[0]['periodnum'];
             $this->periodstart = $periodsetnum[0]['enrollstart'];
             $this->periodend = $periodsetnum[0]['enrollend'];
 
+            // 设置实名认证和报名初始状态
             $this->isverifiinfo = 0;
             $this->isregister = 0;
 
@@ -41,7 +44,7 @@ class IndexController extends Zend_Controller_Action
             $verifiInfo = $StuverifiMapper->Getstuverifi($session->userid);
             if ($verifiInfo)
             {
-              $this->isverifiinfo = 1;
+              $this->isverifiinfo = 1;//完成实名认证状态为1
               $this->stuid = $verifiInfo['studentid']; //学号
               $this->phone = $verifiInfo['phone'];//手机号
 
@@ -50,7 +53,7 @@ class IndexController extends Zend_Controller_Action
               $partystu = $partyStuMapper->getStuByid($this->stuid);
               if($partystu)
               {
-                $this->isregister = 1;
+                $this->isregister = 1;//已完成党校报名状态为1
               }
             }
           }

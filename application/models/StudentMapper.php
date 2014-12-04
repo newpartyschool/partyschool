@@ -92,4 +92,52 @@ class Application_Model_StudentMapper
 			return null;
 		}
 	}
+
+	// 删除学员信息
+	public function delStu($stno)
+	{
+		if (!is_array($stno))
+		{
+			$stno=array($stno);
+		}
+		
+		$ab=$this->db->getAdapter();
+		foreach ($stno as $stno)
+		{
+			$where=$ab->quoteInto('stno IN(?)',$stno);
+			$arr=$this->db->fetchAll($where)->toArray();
+
+			$del=$this->db->delete($where);
+			if ($del!='')
+			{
+				$info = true;
+			}
+			else
+			{
+				$info = false;
+			}
+		}
+
+		return $info;
+	}
+
+	//更新学员优秀状态
+	public function changeGood($stno,$isgood)
+	{
+		$arr = array('isgood' => $isgood);
+		$ab=$this->db->getAdapter();
+		$where=$ab->quoteInto('stno=?',$stno);
+		$res=$this->db->update($set=$arr,$where);
+		return $res;
+	}
+
+	//更新学员结业状态
+	public function changeGraduate($stno,$isgraduate)
+	{
+		$arr = array('isgraduate' => $isgraduate);
+		$ab=$this->db->getAdapter();
+		$where=$ab->quoteInto('stno=?',$stno);
+		$res=$this->db->update($set=$arr,$where);
+		return $res;
+	}
 }

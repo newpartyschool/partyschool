@@ -64,7 +64,7 @@
               <th>手机号码</th>
               <th>性别</th>
               <th>优秀状态</th>
-              <th>毕业状态</th>
+              <th>结业  状态</th>
               <th>成绩</th>
             </tr>
           </thead>
@@ -84,23 +84,23 @@
                     $score = "暂无成绩";
                   }
                   $isgood = "非优秀";
-                  $isgraduate = "非毕业";
+                  $isgraduate = "未结业";
                   if ($stuList['isgood'] == 1)
                   {
-                    $isgood = "优 &nbsp; 秀";
+                    $isgood = "优&nbsp;&nbsp;&nbsp;秀";
                   }
                   if ($stuList['isgraduate'] == 1) {
-                    $isgraduate = "已毕业";
+                    $isgraduate = "已结业";
                   }
 
                   echo "<tr>";
-                  echo '<td><input type="checkbox" name="xueyuan" class="form-control check-change"></td>';
+                  echo '<td><input type="checkbox" name="xueyuan" class="form-control check-change" value="'.$stno.'"></td>';
                   echo "<td>{$stno}</td>";
                   echo "<td>{$stuname}</td>";
                   echo "<td>{$stuphone}</td>";
                   echo "<td>{$sex}</td>";
-                  echo '<td><button class="btn btn-default youxiu" id="'.$stno.'">'.$isgood.'</button></td>';
-                  echo '<td><button class="btn btn-default biye" id="'.$stno.'">'.$isgraduate.'</button></td>';
+                  echo '<td><button class="btn btn-default youxiu" title="点击可修改状态">'.$isgood.'</button></td>';
+                  echo '<td><button class="btn btn-default biye" title="点击可修改状态">'.$isgraduate.'</button></td>';
                   echo "<td>{$score}</td>";
                   echo "</tr>";
                 }

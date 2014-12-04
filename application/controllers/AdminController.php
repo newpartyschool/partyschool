@@ -6,6 +6,7 @@ class AdminController extends Zend_Controller_Action
 	 {
 
 	 }
+
 	 /**
 	  * 党校总结控制
 	  * @return [type] [description]
@@ -150,10 +151,133 @@ class AdminController extends Zend_Controller_Action
 	 		  $this->view->result =$msg;//返回状态参数
 	 		}
 	 	}
+	 	else
+	 	{
+	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
+	 		exit;
+	 	}
 	 }
 
 	 /**
-	  * 个人信息修改控制
+	  * 删除学员控制
+	  * @return [type] [description]
+	  */
+	 public function delstuAction()
+	 {
+	 	$session = new Zend_Session_Namespace('user');
+	 	if (isset($session->depid) && $session->depid != 1)
+	 	{
+	 		if ($_POST)
+	 		{
+	 			$studel = $_POST['del'];
+	 			if (!empty($studel))
+	 			{
+	 				$StudentMapper = new Application_Model_StudentMapper();
+	 				$delStu = $StudentMapper->delStu($studel);
+	 				if ($delStu)
+	 				{
+	 					$this->view->delmsg = '1';//返回删除成功状态
+	 				}
+	 				else
+	 				{
+	 					$this->view->delmsg = '2';//返回删除失败状态
+	 				}
+	 			}
+	 			else
+	 			{
+	 				$this->view->delmsg = '0';//返回提交数据不全
+	 			}
+	 		}
+	 	}
+	 	else
+	 	{
+	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
+	 		exit;
+	 	}
+	 }
+
+	 /**
+	  * 班主任修改学员状态控制
+	  * @return [type] [description]
+	  */
+	 public function changestatusAction()
+	 {
+	 	$session = new Zend_Session_Namespace('user');
+	 	if (isset($session->depid) && $session->depid != 1)
+	 	{
+	 		if ($_POST)
+	 		{
+	 			$stno = strip_tags(trim($_POST['stno']));
+
+	 			//判断修改结业状态还是优秀状态
+	 			if (isset($_POST['isgraduate']))
+	 			{
+	 				$isgraduate = strip_tags(trim($_POST['isgraduate']));	
+	 			}
+	 			if (isset($_POST['isgood']))
+	 			{
+	 				$isgood = strip_tags(trim($_POST['isgood']));
+	 			}
+
+	 			$StudentMapper = new Application_Model_StudentMapper();
+	 			if (!empty($stno) && !empty($isgraduate))
+	 			{
+	 				if ($isgraduate == '已结业')
+	 				{
+	 					$isgraduate = 0;//现状态为已结业则isgraduate改为0
+	 				}
+	 				else
+	 				{
+	 					$isgraduate = 1;//现状态为未结业则isgraduate改为1
+	 				}
+	 				//修改状态
+	 				$graduateInfo = $StudentMapper->changeGraduate($stno,$isgraduate);
+	 				if ($graduateInfo)
+	 				{
+	 				    $this->view->statusmsg = '1';//修改结业状态成功
+	 				}
+	 				else
+	 				{
+	 					$this->view->statusmsg = '10';//结业状态修改失败
+	 				}
+	 			}
+	 			elseif (!empty($stno) && !empty($isgood))
+	 			{
+	 				if ($isgood == '优&nbsp;&nbsp;&nbsp;秀')
+	 				{
+	 					$isgood = 0;//如果现状态为已结业则isgood改为0
+	 				}
+	 				else
+	 				{
+	 					$isgood = 1;//如果现状态为未结业则isgood改为1
+	 				}
+	 				//修改优秀状态
+	 				$goodInfo = $StudentMapper->changeGood($stno,$isgood);
+	 				if ($goodInfo)
+	 				{
+	 				    $this->view->statusmsg = '2';//修改优秀状态成功
+	 				}
+	 				else
+	 				{
+	 					$this->view->statusmsg = '20';//修改优秀状态失败
+	 				}
+	 				
+	 			}
+	 			else
+	 			{
+	 				$this->view->statusmsg = '0';
+	 			}
+	 		}
+	 	}
+	 	else
+	 	{
+	 		echo "<script>alert('无权访问，请登录确认');location.href='/login'</script>";
+	 		exit;
+	 	}
+	 }
+
+	 /**
+	  * 班主任个人信息修改控制
 	  * @return [type] [description]
 	  */
 	 public function percenterAction()

@@ -1,5 +1,5 @@
 $('#addXueyuan').bind('click',function(){
-    var xueyuan='<form role="form" id="addForm"><label for="stuNo">学号：</label><input class="form-control" id="stuNo" type="text" name="stuNo" placeholder="请输入学生学号"/><label for="stuNo">姓名：</label><input class="form-control" id="stuName" type="text" name="stuName" placeholder="请输入学生姓名"/><label for="stuNo">手机号：</label><input class="form-control" id="stuTel" type="text" name="stuTel" placeholder="请输入学生电话"/><label>性别：</label><br/><input type="radio" name="stuGender" id="stuGender" value="男"><label for="male">男</label><input type="radio" name="stuGender" id="stuGender" value="女"><label for="female">女</label><br/><label for="">优秀状态：</label><br/><input type="radio" name="isGood" value="优秀" id="isGood"><label for="good">优秀</label><input type="radio" name="isGood" value="非优秀" id="isGood"><label for="bad">非优秀</label><br/><label for="">毕业状态：</label><br/><input type="radio" name="isGradute" value="1" id="isGradute"><label for="good">毕业</label><input type="radio" name="isGradute" value="2" id="isGradute"><label for="bad">非毕业</label>';
+    var xueyuan='<form role="form" id="addForm"><label for="stuNo">学号：</label><input class="form-control" id="stuNo" type="text" name="stuNo" placeholder="请输入学生学号"/><label for="stuNo">姓名：</label><input class="form-control" id="stuName" type="text" name="stuName" placeholder="请输入学生姓名"/><label for="stuNo">手机号：</label><input class="form-control" id="stuTel" type="number" name="stuTel" placeholder="请输入学生电话"/><label>性别：</label><br/><input type="radio" name="stuGender" id="stuGender" value="男"><label for="male">男</label><input type="radio" name="stuGender" id="stuGender" value="女"><label for="female">女</label><br/><label for="">优秀状态：</label><br/><input type="radio" name="isGood" value="优秀" id="isGood"><label for="good">优秀</label><input type="radio" name="isGood" value="非优秀" id="isGood"><label for="bad">非优秀</label><br/><label for="">结业状态：</label><br/><input type="radio" name="isGradute" value="1" id="isGradute"><label for="good">结业</label><input type="radio" name="isGradute" value="2" id="isGradute"><label for="bad">未结业</label>';
 
     artDialog(
         {
@@ -49,6 +49,9 @@ $('#addXueyuan').bind('click',function(){
                 }
                 else if(msg == 4){
                     alert('请添加完整信息');
+                }
+                else if(msg == 6){
+                    alert('登录超时，请重新登录');
                 }
                 else{
                     alert('添加失败');

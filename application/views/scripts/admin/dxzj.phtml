@@ -40,8 +40,12 @@
 	</div>
   <!-- 页面内容 -->
   <div class="main-container">
+   <?php
+      if ($this->paginator_studentinfo)
+      {
+    ?>
     <div class="main-title">
-      <h2>第<?php echo $this->classid;?>期党校党员班学员信息表</h2>
+      <h2>第<?php echo $this->periodsnum;?>期党校党员班学员信息表</h2>
         <label>校区:</label>
         <span><?php echo $this->campus;?></span>
         
@@ -53,6 +57,9 @@
 
         <a href="/admin/xls" class="btn btn-info">生成excel</a>
     </div>
+    <?php
+      }
+    ?>
     <div class="main-content">
       <!-- <form> -->
         <table class="table table-hover">
@@ -68,17 +75,17 @@
               <th>成绩</th>
             </tr>
           </thead>
-          <tbody>
             <?php
               if ($this->paginator_studentinfo)
               {
+                echo "<tbody>";
                 foreach ($this->paginator_studentinfo as $stuList)
                 {
                   $stno = $stuList['stno'];
                   $stuname = $stuList['name'];
                   $stuphone = $stuList['phonenum'];
                   $sex = $stuList['sex'];
-                  $score = $stuList['grade'];
+                  $score = $stuList['partygrade'];
                   if ($score == '')
                   {
                     $score = "暂无成绩";
@@ -104,12 +111,6 @@
                   echo "<td>{$score}</td>";
                   echo "</tr>";
                 }
-              }
-              else
-              {
-                echo "no";
-              }
-
               global $arrList;
               $paginator_all=$this->paginator_all;
             ?>
@@ -125,11 +126,31 @@
           </ul>
         </div>
         <button type="button" class="btn btn-danger" id="all-del">一键删除</button>
+        <?php
+          }
+          else
+          {
+            echo "</table>";
+            echo "<div class='tishi'>";
+            echo "暂无学员数据,点击左边加号可添加学员";
+            echo "</div>";
+          }
+        ?>
       <!-- </form> -->
        <!-- 优秀学员 -->
         <div class="students-yx info">
           <label for="st-yx">优秀学员姓名（人数占所带学生总人数10%）</label>
-          <textarea name="st-yx" id="st-yx" class="form-control" disabled>自动显示优秀学员姓名</textarea>
+          <textarea name="st-yx" id="st-yx" class="form-control" disabled="disabled">
+            <?php
+            if ($this->goodstuName)
+            {
+              foreach ($this->goodstuName as $stu)
+              {
+                echo $stu['name'].'&nbsp;&nbsp;';
+              }
+            }
+            ?>
+          </textarea>
         </div>
 
       <!-- 党校总结表单 -->

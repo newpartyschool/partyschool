@@ -10,17 +10,20 @@ body{
 	display: inline-block;
 }
 
-.main-title span, .main-title form span{
+.main-title form span{
 	font-weight:bold;
 	color: #777272;
 	font-size: 16px; 
 }
-.main-title label,.main-title form label{
+.main-title form label{
 	margin-left: 23px;
 	color: #777272;
 }
 .main-title form .classdate{
 	width: 8%;
+}
+.grade{
+	width: 80px;
 }
 #search{
 	width: 9%;
@@ -41,29 +44,29 @@ body{
 	border-radius: 8px;
 	background: #FFF;
 }
-.main-content form,.main-info{
+.contentdiv{
 	width: 96%;
 	margin:20px auto 15px auto;
 }
-.main-content form table,.main-info table{
+.contentdiv table{
 	border-bottom: 2px solid #CCC;
 	margin-bottom: 10px;
 }
-.main-content table tr td, .main-content form table tr td{
+.contentdiv table tr td{
 	line-height: 3;
 }
-.main-content form table tr td .del-icon,.main-info table tr th img{
+.contentdiv table tr td .del-icon{
 	cursor: pointer;
 }
-.main-content form .btn-submit,.main-info .btn-submit{
+.contentdiv .btn-submit{
 	margin-left: 80%;
 	width: 8%;
 }
-.main-content form table tr td .chengji{
+.contentdiv table tr td .chengji{
 	width: 25%;
 	display: inline-block;
 }
-.main-content form table tr td img{
+.contentdiv table tr td .del-icon{
 	width: 25px;
 	height: 25px;
 	display: inline-block;
@@ -77,4 +80,11 @@ body{
 }
 .main-content .info button{
 	margin-left: 89%;
+}
+.main-content .tishi{
+	width: 96%;
+	margin:20px auto 15px auto;
+	height: 200px;
+	font-size: 16px;
+	text-align: center;
 }

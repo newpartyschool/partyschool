@@ -7,13 +7,12 @@ class Application_Model_StudentMapper
 	}
 
 	// 获取学员信息
-	public function getStuinfo($where = array(), $order = null, $limit = null)
+	public function getStuinfo($stno = array(), $order = null, $limit = null)
 	{
 		$select = $this->db->select();
-		if (count($where) > 0) {
-			foreach ($where as $key => $value) {
-				$select->where($key.'=?',$value);
-			}
+		if ($stno)
+		{
+			$select->orWhere('stno IN(?)', $stno);
 		}
 
 		if ($order) {
@@ -24,6 +23,22 @@ class Application_Model_StudentMapper
 			$select->limit($limit);
 		}
 
+		$arr = $this->db->fetchAll($select)->toarray();
+
+		if (count($arr) > 0) {
+			return $arr;
+		}else{
+			return null;
+		}
+	}
+
+	// 获取优秀学员信息
+	public function Showgood($stno = array())
+	{
+		$isgood = 1;
+		$select = $this->db->select();
+		$select->orWhere('stno IN(?)', $stno);
+		$select->where('isgood = ?',$isgood);
 		$arr = $this->db->fetchAll($select)->toarray();
 
 		if (count($arr) > 0) {
@@ -47,14 +62,13 @@ class Application_Model_StudentMapper
 	}
 
 	// 存贮学员数据
-	public function saveStuinfo($stno,$name,$sex,$depname,$major,$type,$getclasstype,$classid,$getphone,$isgood,$isgraduate)
+	public function saveStuinfo($stno,$name,$sex,$depname,$major,$type,$getclasstype,$getphone,$isgood,$isgraduate)
 	{
 		$ab = $this->db->getAdapter();
 		$where = $ab->quoteInto('stno =?',$stno);
 		$result = $this->db->fetchRow($where);
 		if (empty($result))
 		{
-			$grade = 0;
 			$arr = array(
 						 'stno'=>$stno,
 						 'name'=>$name,
@@ -63,9 +77,7 @@ class Application_Model_StudentMapper
 						 'major'=>$major,
 						 'type'=>$type,
 						 'classname'=>$getclasstype,
-						 'classid'=>$classid,
 						 'phonenum'=>$getphone,
-						 'grade'=>$grade,
 						 'isgood'=>$isgood,
 						 'isgraduate'=>$isgraduate
 						);
@@ -75,20 +87,6 @@ class Application_Model_StudentMapper
 		}
 		else
 		{
-			return null;
-		}
-	}
-
-
-	// 查询成绩
-	public function GetGrade($stno)
-	{
-		$ab = $this->db->getAdapter();
-		$where = $ab->quoteInto('stno =?',$stno);
-		$res = $this->db->fetchRow($where);
-		if ($res) {
-			return $res;
-		}else{
 			return null;
 		}
 	}

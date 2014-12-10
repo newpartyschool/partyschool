@@ -78,4 +78,17 @@ class LoginController extends Zend_Controller_Action
             exit;
 		}
 	}
+
+    // public function regAction()
+    // {
+    //     if ($_POST)
+    //     {
+    //     $username = trim($_POST['username']);
+    //     $realname = $username;
+    //     $pw = md5($username);
+    //     $depid = $_POST['depid'];
+    //     $UserMapper = new Application_Model_UserMapper();
+    //     $reg = $UserMapper->addUser($username,$realname,$pw,$depid);
+    //     }
+    // }
 }

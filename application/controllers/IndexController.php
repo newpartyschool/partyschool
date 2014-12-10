@@ -7,9 +7,9 @@ class IndexController extends Zend_Controller_Action
        // $user_agent = $_SERVER['HTTP_USER_AGENT'];//判断是否由微信客户端打开
        // if (strpos($user_agent, 'MicroMessenger') === false)
        // {
-       //   echo "<h1>请用微信客户端打开</h1>";
+       //   echo "<h1>一定是打开方式不对，亲，请用微信客户端打开哦</h1>";
        //   exit;
-       // }
+       // } 
        // else
        // {
           // 接受微信用户FromUserName或者从session调用
@@ -25,12 +25,14 @@ class IndexController extends Zend_Controller_Action
               $info = $session->userid;
             }
 
-            // 获取最新期数
+            // 获取最新期数数据
             $Periodset = new Application_Model_PeriodsetMapper();
             $periodsetnum = $Periodset->findPeriod();
-            $this->periodnum = $periodsetnum[0]['periodnum'];
+            $this->view->periodnum = $periodsetnum[0]['periodnum'];
             $this->periodstart = $periodsetnum[0]['enrollstart'];
             $this->periodend = $periodsetnum[0]['enrollend'];
+            $this->teststart = $periodsetnum[0]['able_test_start'];
+            $this->testend = $periodsetnum[0]['able_test_end'];
 
             // 设置实名认证和报名初始状态
             $this->isverifiinfo = 0;
@@ -59,7 +61,7 @@ class IndexController extends Zend_Controller_Action
           }
           else
           {
-            echo "<h1>一定是打开方式不对，亲，请用微信重新打开哦</h1>";
+            echo "<h1>一定是打开方式不对，正确的姿势：关注微信合工大，点击掌上党校哦</h1>";
             exit;
           }
 
@@ -117,14 +119,16 @@ class IndexController extends Zend_Controller_Action
 
                 // 获取classid
                 $ClassMapper = new Application_Model_ClassMapper();
-                $classinfo = $ClassMapper->getClassid($getclasstype,$getperiodsnum,$getdepid,$getcampus);
+                $classinfo = $ClassMapper->getClassid($getclasstype,$this->view->periodnum,$getdepid,$getcampus);
                 $classid = $classinfo[0]['classid'];
                 $isgood = 0;
                 $isgraduate = 0;
 
                 // 记录数据
                 $partyStuMapper = new Application_Model_StudentMapper();
-                $partysave = $partyStuMapper->saveStuinfo($getstuid,$getstuname,$getsex,$depart,$major,$type,$getclasstype,$classid,$getphone,$isgood,$isgraduate);
+                $partysave = $partyStuMapper->saveStuinfo($getstuid,$getstuname,$getsex,$depart,$major,$type,$getclasstype,$getphone,$isgood,$isgraduate);
+                $StuclassMapper = new Application_Model_StuclassMapper();
+                $partysave = $StuclassMapper->saveStuclass($getstuid,$classid);
                 if($partysave)
                 {
                   echo "<script>alert('报名成功，现在去学习吧');location.href='/index';</script>";
@@ -173,43 +177,54 @@ class IndexController extends Zend_Controller_Action
       if ($this->isregister == 1)//判断是否报名
       {
        $selectedquestionMapper = new Application_Model_SelectedquestionMapper();
-       $where =1;
-       $same = $selectedquestionMapper->findSelectedquestionById(2);
-       foreach($same as $key=>$values) {
-          $qeid = $values['qeid'];
-          $queupdateMapper = new Application_Model_QueupdateMapper();
-        $arr= $queupdateMapper->findQueupdateById($qeid);
-        $arrList[]=$arr[0];
-       }
-      
-       $num=1; $page=1; //设置每一页显示的文章数目 //设置第一页显示
-       $paginator_choose = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
-       $paginator_choose->setItemCountPerPage($num); //设置每一页显示的文章数目
-       $paginator_choose->setCurrentPageNumber($page); //设置第一页显示
-       $paginator_choose->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
-       $this->view->pages = $this->_getParam('page');//根据page输出题号
-       if($this->view->pages == "")
+       $where = $this->view->periodnum;
+       $same = $selectedquestionMapper->findSelectedquestionById($where);
+       if ($same)
        {
-         $this->view->pages = 1;
-       }
-       $this->view->paginator_choose = $paginator_choose;
-     }
-     else
-     {
-       $this->_redirect('/index/statuserror');
-       exit;
-     }
+         foreach($same as $key=>$values)
+         {
+           $qeid = $values['qeid'];
+           $queupdateMapper = new Application_Model_QueupdateMapper();
+           $arr= $queupdateMapper->findQueupdateById($qeid);
+           $arrList[]=$arr[0];
+         }
 
+         $num=1; $page=1; //设置每一页显示的文章数目 //设置第一页显示
+         $paginator_choose = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+         $paginator_choose->setItemCountPerPage($num); //设置每一页显示的文章数目
+         $paginator_choose->setCurrentPageNumber($page); //设置第一页显示
+         $paginator_choose->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+         $this->view->pages = $this->_getParam('page');//根据page输出题号
+         if($this->view->pages == "")
+         {
+          $this->view->pages = 1;
+         }
+         $this->view->paginator_choose = $paginator_choose;
+       }
+      }
+      else
+      {
+        $this->_redirect('/index/statuserror');
+        exit;
+      }
     }
 
     public function gradeAction()
     {
       if ($this->isregister == 1)
       {
-        $partyStuMapper = new Application_Model_StudentMapper();
-        $gradeinfo = $partyStuMapper->GetGrade($this->stuid);
-        $this->view->grade = $gradeinfo['grade'];
-        $this->view->partygrade = $gradeinfo['partygrade'];
+        if (date("Y-m-d") > $this->testend)
+        {
+          $ScoreMapper = new Application_Model_ScoreMapper();
+          $gradeinfo = $ScoreMapper->GetGrade($this->stuid);
+          $this->view->testgrade = $gradeinfo['testscore'];
+          $this->view->totalgrade = $gradeinfo['totalscore'];
+        }
+        else
+        {
+          $this->_redirect('index/warning');
+        }
+        
       }
       else
       {

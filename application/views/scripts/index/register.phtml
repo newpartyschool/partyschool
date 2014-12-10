@@ -35,10 +35,7 @@
 			<select class="form-control height-input" name="periodsnum">
 			    <option value="" disabled selected style="display:none;"> -- 期数 -- </option>
 			    <?php
-			      for ($i=51; $i <= 100; $i++)
-			      {
-			      	echo '<option value="'.$i.'">'.$i.'</option>';
-			      }
+			      	echo '<option value="'.$this->periodnum.'">'.$this->periodnum.'</option>';
 			    ?>
 			</select>
 			<select class="form-control height-input" name="campus">

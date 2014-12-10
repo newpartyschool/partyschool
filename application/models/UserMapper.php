@@ -18,11 +18,6 @@ class Application_Model_UserMapper
 		$where = $ab->quoteInto('username = ?',$username)
 				 .$ab->quoteInto('AND pw = ?',$pw);
 		$arr = $this->db->fetchAll($where)->toArray();
-		// if(count($arr) > 0){
-		// 	return $arr;
-		// }else{
-		// 	return null;
-		// }	
 		return $arr;
 	}
 	/**
@@ -136,5 +131,29 @@ class Application_Model_UserMapper
 		}
 	}
 
+	//批量初始化user数据
+	public function recover()
+	{
+		$ab = $this->db->getAdapter();
+		$res = $this->db->fetchAll()->toArray();
+		foreach ($res as $res)
+		{
+			$username = $res['username'];
+			$pw = md5($username);
+			$arr = array('pw' => $pw);
+			$ab=$this->db->getAdapter();
+			$where=$ab->quoteInto('username=?',$username);
+			$res=$this->db->update($set=$arr,$where);
+			if ($res)
+			{
+				$info = true;
+			}
+			else
+			{
+				$info = false;
+			}
+		}
+		return $info;
+	}
 	
 }

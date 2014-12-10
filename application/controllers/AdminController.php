@@ -4,7 +4,16 @@ class AdminController extends Zend_Controller_Action
 {
 	 public function init()
 	 {
-
+	 	// 获取最新期数数据
+	 	$Periodset = new Application_Model_PeriodsetMapper();
+	 	$periodsetnum = $Periodset->findPeriod();
+	 	$this->view->periodnum = $periodsetnum[0]['periodnum'];
+	 	$this->periodstart = $periodsetnum[0]['enrollstart'];
+	 	$this->periodend = $periodsetnum[0]['enrollend'];
+	 	$this->teststart = $periodsetnum[0]['able_test_start'];
+	 	$this->testend = $periodsetnum[0]['able_test_end'];
+	 	$this->sum_start = $periodsetnum[0]['sum_start'];
+	 	$this->sum_end = $periodsetnum[0]['sum_end'];
 	 }
 
 	 /**
@@ -18,57 +27,86 @@ class AdminController extends Zend_Controller_Action
 	 	if (isset($session->depid)&&$session->depid != 1)
 	 	{
 	 		// 获取班级数据
-	 		$teacher = $session->realname;
+	 		$userid = $session->userid;
 	 		$ClassMapper = new Application_Model_ClassMapper();
-	 		$classinfo = $ClassMapper->findClassInfo($teacher);
-	 		$this->view->classid = $classid = $classinfo[0]['classid'];
-	 		$this->view->campus = $classinfo[0]['campus'];
-	 		$this->view->depid = $classinfo[0]['depid'];
-	 		$this->view->classtype =$classinfo[0]['classtype'];
-
-	 		//查询学院信息
-	 		$DepartmentMapper = new Application_Model_DepartmentMapper();
-	 		$depInfo = $DepartmentMapper->findDept($this->view->depid);
-	 		$this->view->depname = $depInfo[0]['depname'];
-
-	 		// 获取党校总结数据
-	 		$ClassummaryMapper = new Application_Model_ClassummaryMapper();
-	 		$dxInfo  = $ClassummaryMapper->dxzjdata($this->view->classid);
-	 		$this->view->xysz    = $dxInfo['xysz'];
-	 		$this->view->study   = $dxInfo['study'];
-	 		$this->view->taolun  = $dxInfo['taolun'];
-	 		$this->view->shijian = $dxInfo['shijian'];
-
-	 		$sz = strip_tags(trim($this->getRequest()->getParam('xy-sz')));
-	 		$studycontent = strip_tags(trim($this->getRequest()->getParam('study-content')));
-	 		$taoluncontent = strip_tags(trim($this->getRequest()->getParam('taolun-content')));
-	 		$shijiancontent = strip_tags(trim($this->getRequest()->getParam('shijian-content')));
-	 		if (!empty($sz) && !empty($studycontent) && !empty($taoluncontent) && !empty($shijiancontent))
+	 		$classinfo = $ClassMapper->findClassInfo($userid);
+	 		if ($classinfo)
 	 		{
-	 			$ClassummaryMapper = new Application_Model_ClassummaryMapper();
-	 			$arr = $ClassummaryMapper->dxzjForm($classid,$sz,$studycontent,$taoluncontent,$shijiancontent);
-	 			if ($arr)
+	 			$this->view->classid = $classid = $classinfo[0]['classid'];
+	 			$this->view->periodsnum =$classinfo[0]['periodsnum'];
+	 			$this->view->campus = $classinfo[0]['campus'];
+	 			$this->view->depid = $classinfo[0]['depid'];
+	 			$this->view->classtype =$classinfo[0]['classtype'];
+
+	 			//查询学院信息
+	 			$DepartmentMapper = new Application_Model_DepartmentMapper();
+	 			$depInfo = $DepartmentMapper->findDept($this->view->depid);
+	 			$this->view->depname = $depInfo[0]['depname'];
+
+	 			///学员信息输出
+	 			$StuclassMapper = new Application_Model_StuclassMapper();
+	 			$stuclass = $StuclassMapper->getStnoByclass($classid);
+	 			$stno = array();
+	 			$stno = $stuclass;
+	 			$StudentMapper = new Application_Model_StudentMapper();
+	 			$order = "stno DESC";
+	 			
+	 			$limit = null;
+	 			if (!empty($stno))
 	 			{
-	 				echo "<script>alert('已提交');</script>";
+	 				$arrList = $StudentMapper->getStuinfo($stno,$order,$limit);
+	 				if ($arrList)
+	 				{
+	 					$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
+	 					$paginator_studentinfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+	 					$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的学生信息数目
+	 					$paginator_studentinfo->setCurrentPageNumber($page); //设置第一页显示
+	 					$paginator_studentinfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+	 					$this->view->paginator_studentinfo = $paginator_studentinfo;
+	 				}
+
+	 				//获取班级优秀学员
+	 				$goodstudent = $StudentMapper->Showgood($stno);
+	 				$this->view->goodstuName = $goodstudent;
 	 			}
 	 			
+	 			// 获取党校总结数据
+	 			$ClassummaryMapper = new Application_Model_ClassummaryMapper();
+	 			$dxInfo  = $ClassummaryMapper->dxzjdata($this->view->classid);
+	 			$this->view->xysz    = $dxInfo['xysz'];
+	 			$this->view->study   = $dxInfo['study'];
+	 			$this->view->taolun  = $dxInfo['taolun'];
+	 			$this->view->shijian = $dxInfo['shijian'];
+
+	 			if (isset($_POST['xy-sz']))
+	 			{
+	 				//判断是否在总结时间内
+	 				if (date("Y-m-d") <= $this->sum_end && date("Y-m-d") >= $this->sum_start)
+	 				{
+	 					$sz = strip_tags(trim($this->getRequest()->getParam('xy-sz')));
+	 					$studycontent = strip_tags(trim($this->getRequest()->getParam('study-content')));
+	 					$taoluncontent = strip_tags(trim($this->getRequest()->getParam('taolun-content')));
+	 					$shijiancontent = strip_tags(trim($this->getRequest()->getParam('shijian-content')));
+	 					if (!empty($sz) && !empty($studycontent) && !empty($taoluncontent) && !empty($shijiancontent))
+	 					{
+	 						$ClassummaryMapper = new Application_Model_ClassummaryMapper();
+	 						$arr = $ClassummaryMapper->dxzjForm($classid,$sz,$studycontent,$taoluncontent,$shijiancontent);
+	 						if ($arr)
+	 						{
+	 							echo "<script>alert('已提交');location.href='/admin/dxzj';</script>";
+	 						}
+	 					}
+	 				}
+	 				elseif (date("Y-m-d") > $this->sum_end)
+	 				{
+	 					echo "<script>alert('总结时间已经过了哦');</script>";
+	 				}
+	 				elseif (date("Y-m-d") < $this->sum_start)
+	 				{
+	 					echo "<script>alert('总结时间还没到哦');</script>";
+	 				}
+	 			}
 	 		}
-
-	 		///学员信息输出
-	 		$StudentMapper = new Application_Model_StudentMapper();
-	 		$order = "stno DESC";
-	 		$where = array('classid' => $classid);
-	 		$limit = null;
-	 		$arrList = $StudentMapper->getStuinfo($where,$order,$limit);
-
-	 		// $this->view->arrList = $arrList;
-	 		$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
-	 		$paginator_studentinfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
-	 		$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的学生信息数目
-	 		$paginator_studentinfo->setCurrentPageNumber($page); //设置第一页显示
-	 		$paginator_studentinfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
-	 		$this->view->paginator_studentinfo = $paginator_studentinfo;
-
 	 	}
 	 	else
 	 	{
@@ -95,60 +133,91 @@ class AdminController extends Zend_Controller_Action
 	 		$isGradute = strip_tags(trim($this->getRequest()->getParam('isGradute')));
 	 		if ($_POST)
 	 		{
+
 	 		 if (!empty($stuNo) && !empty($stuName) && !empty($stuTel) && !empty($stuGender) && !empty($isGood) && !empty($isGradute))
 	 		 {
-	 		 	$StudentMapper = new Application_Model_StudentMapper();
-	 		 	$arr = $StudentMapper->getStuByid($stuNo);
-	 		 	if ($arr)
+	 		 	// 获取班级数据
+	 		 	
+	 		 	if (isset($session->userid))
 	 		 	{
-	 		 		$msg = 0;//已存在该学生
+	 		 		$userid = $session->userid;
+	 		 		$ClassMapper = new Application_Model_ClassMapper();
+	 		 		$classinfo = $ClassMapper->findClassInfo($userid);
+	 		 		if ($classinfo)
+	 		 		{
+	 		 		    // 获取班级数据
+	 		 			$classid = $classid = $classinfo[0]['classid'];
+	 		 			$periodsnum =$classinfo[0]['periodsnum'];
+	 		 			$campus = $classinfo[0]['campus'];
+	 		 			$depid = $classinfo[0]['depid'];
+	 		 			$classtype =$classinfo[0]['classtype'];
+
+	 		 			$StuclassMapper = new Application_Model_StuclassMapper();
+	 		 			$arr = $StuclassMapper->checkStuclass($stuNo,$classid);
+	 		 			if ($arr)
+	 		 			{
+	 		 				$msg = 0;//已存在该学生
+	 		 			}
+	 		 			else
+	 		 			{
+	 		 				$StudentinfoMapper = new Application_Model_StudentinfoMapper();
+	 		 				$res = $StudentinfoMapper->Getstudentinfo($stuNo);
+	 		 				if (empty($res))
+	 		 				{
+	 		 					$msg = 1;//学号不存在
+	 		 				}
+	 		 				else
+	 		 				{
+	 		 					//查询学院信息
+	 		 					$DepartmentMapper = new Application_Model_DepartmentMapper();
+	 		 					$depInfo = $DepartmentMapper->findDept($depid);
+	 		 					$depname = $depInfo[0]['depname'];
+
+	 		 					//获取$type $major
+	 		 					$major = $res['class'];
+	 		 					$type = $res['type'];
+	 		 					// score表课程名字
+	 		 					$courseid = 1;
+	 		 					if ($classtype == '党员班')
+	 		 					{
+	 		 						$courseid = 2;
+	 		 					}
+	 		 					// $msg = 3;
+
+	 		 					// 后台添加数据
+	 		 					$StudentMapper = new Application_Model_StudentMapper();
+	 		 					$student = $StudentMapper->saveStuinfo($stuNo,$stuName,$stuGender,$depname,$major,$type,$classtype,$stuTel,$isGood,$isGradute);
+	 		 					$StuclassMapper = new Application_Model_StuclassMapper();
+	 		 					$savestuclass = $StuclassMapper->saveStuclass($stuNo,$classid);
+	 		 					$ScoreMapper =new Application_Model_ScoreMapper();
+	 		 					$score =$ScoreMapper->addScore($stuNo,$courseid);
+
+	 		 					if ($student && $savestuclass && $score)
+	 		 					{
+	 		 						$msg = 2;//添加成功
+	 		 					}
+	 		 					else
+	 		 					{
+	 		 						$msg = 3;//学号存在但添加不成功
+	 		 					}
+	 		 				}
+	 		 			}
+	 		 		}
+	 		 		else
+	 		 		{
+	 		 			$msg = 5;//没有此班级
+	 		 		}
 	 		 	}
 	 		 	else
 	 		 	{
-	 		 	  $StudentinfoMapper = new Application_Model_StudentinfoMapper();
-	 		 	  $res = $StudentinfoMapper->Getstudentinfo($stuNo);
-	 		 	  if (empty($res))
-	 		 	  {
-	 				$msg = 1;//学号不存在
-	 			  }
-	 			  else
-	 			  {
-	 				 // 获取班级数据
-	 				$teacher = $session->realname;
-	 				$ClassMapper = new Application_Model_ClassMapper();
-	 				$classinfo = $ClassMapper->findClassInfo($teacher);
-	 				$classid = $classinfo[0]['classid'];
-	 				$depid = $classinfo[0]['depid'];
-	 				$classtype =$classinfo[0]['classtype'];
-
-	 				//查询学院信息
-	 				$DepartmentMapper = new Application_Model_DepartmentMapper();
-	 				$depInfo = $DepartmentMapper->findDept($depid);
-	 				$depname = $depInfo[0]['depname'];
-
-	 				//获取$type $major
-	 				$major = $res['class'];
-	 				$type = $res['type'];
-
-	 				// 后台添加数据
-	 				$StudentMapper = new Application_Model_StudentMapper();
-	 				$student = $StudentMapper->saveStuinfo($stuNo,$stuName,$stuGender,$depname,$major,$type,$classtype,$classid,$stuTel,$isGood,$isGradute);
-	 				if ($student)
-	 				{
-	 					$msg = 2;//添加成功
-	 				}
-	 				else
-	 				{
-	 					$msg = 3;//学号存在但添加不成功
-	 				}
-	 			   }
-	 			}
-	 		  }
-	 		  else
-	 		  {
-	 			$msg = 4;//提交数据不全
-	 		  }
-	 		  $this->view->result =$msg;//返回状态参数
+	 		 		$msg = 6;//session已注销，重新登录
+	 		 	}
+	 		 }
+	 		 else
+	 		 {
+	 		 	$msg = 4;//提交数据不全
+	 		 }
+	 		 $this->view->result = $msg;//返回状态参数
 	 		}
 	 	}
 	 }
@@ -169,6 +238,10 @@ class AdminController extends Zend_Controller_Action
 	 			{
 	 				$StudentMapper = new Application_Model_StudentMapper();
 	 				$delStu = $StudentMapper->delStu($studel);
+	 				$StuclassMapper = new Application_Model_StuclassMapper();
+	 				$delStu = $StuclassMapper->delStuclass($studel);
+	 				$ScoreMapper =new Application_Model_ScoreMapper();
+	 				$delStu =$ScoreMapper->delScore($studel);
 	 				if ($delStu)
 	 				{
 	 					$this->view->delmsg = '1';//返回删除成功状态
@@ -187,7 +260,7 @@ class AdminController extends Zend_Controller_Action
 	 }
 
 	 /**
-	  * 班主任修改学员状态控制
+	  * 修改学员状态控制
 	  * @return [type] [description]
 	  */
 	 public function changestatusAction()
@@ -251,12 +324,54 @@ class AdminController extends Zend_Controller_Action
 	 				{
 	 					$this->view->statusmsg = '20';//修改优秀状态失败
 	 				}
-	 				
 	 			}
 	 			else
 	 			{
 	 				$this->view->statusmsg = '0';
 	 			}
+	 		}
+	 	}
+	 }
+
+	 /**
+	  * 获取优秀学员
+	  * @return [type] [description]
+	  */
+	 public function showgoodAction()
+	 {
+	 	if (isset($_POST['stno']))
+	 	{
+	 		$stno = strip_tags(trim($_POST['stno']));
+	 		if(!empty($stno))
+	 		{
+	 		   //由学号获取所在clssid
+	 		   $StuclassMapper = new Application_Model_StuclassMapper();
+	 		   $getStuinfo = $StuclassMapper->getClassBystno($stno);
+	 		   if ($getStuinfo)
+	 		   {
+	 		   	  $classid = $getStuinfo['classid'];
+
+	 		   	  $StuclassMapper = new Application_Model_StuclassMapper();
+	 		   	  $stuclass = $StuclassMapper->getStnoByclass($classid);
+	 		   	  $stno = array();
+	 		   	  $stno = $stuclass;
+
+	 		   	  //获取班级优秀学员
+	 		   	  $StudentMapper = new Application_Model_StudentMapper();
+	 		   	  $goodstudent = $StudentMapper->Showgood($stno);
+	 		   	  $goodstuName = $goodstudent;
+	 		   	  if ($goodstuName)
+	 		   	  {
+	 		   	  	foreach ($goodstuName as $stu)
+	 		   	  	{
+	 		   	  		echo $stu['name'].'&nbsp;&nbsp;';
+	 		   	  	}
+	 		   	  }
+	 		   	  else
+	 		   	  {
+	 		   	  	echo "&nbsp;";
+	 		   	  }
+	 		   }
 	 		}
 	 	}
 	 }
@@ -274,10 +389,11 @@ class AdminController extends Zend_Controller_Action
 	 		$newpwd = strip_tags(trim($this->getRequest()->getParam('newpwd')));
 	 		$repwd = strip_tags(trim($this->getRequest()->getParam('repwd')));
 
-	 		$teacher = $session->realname;
+	 		$userid = $session->userid;
 	 		$ClassMapper = new Application_Model_ClassMapper();
-	 		$classinfo = $ClassMapper->findClassInfo($teacher);
+	 		$classinfo = $ClassMapper->findClassInfo($userid);
 	 		$classid = $classinfo[0]['classid'];
+	 		$this->view->periodsnum = $classinfo[0]['periodsnum'];
 
 	 		if (!empty($newpwd) || !empty($realname))
 	 		{
@@ -287,11 +403,9 @@ class AdminController extends Zend_Controller_Action
 	 				$userid = $session->userid;
 	 				$UserMapper = new Application_Model_UserMapper();
 	 				$arr = $UserMapper->modifyUserInfo($realname,$userid,md5($newpwd));
-	 				$ClassMapper = new Application_Model_ClassMapper();
-	 				$res = $ClassMapper->changeInfo($realname,$classid);
 	 				if ($arr)
 	 				{
-	 					echo "<script>alert('修改成功,请重新登录');location.href='/login/logout';</script>";
+	 					echo "<script>alert('修改成功');</script>";
 	 				}
 	 			}
 	 			else
@@ -318,7 +432,7 @@ class AdminController extends Zend_Controller_Action
 	 	if (isset($session->depid)&&$session->depid != 1)
 	 	{
 	 		// 获取班级数据
-	 		$teacher = $session->realname;
+	 		$teacher = $session->userid;
 	 		$ClassMapper = new Application_Model_ClassMapper();
 	 		$classinfo = $ClassMapper->findClassInfo($teacher);
 	 		$classid = $classid = $classinfo[0]['classid'];
@@ -407,13 +521,23 @@ class AdminController extends Zend_Controller_Action
 		 		}
 		 		$periodsetMapper = new Application_Model_PeriodsetMapper();
 		 		$result = $periodsetMapper->addPeriods($periodnum,$enrollstart,$able_test_start,$sum_start,$enrollend,$able_test_end,$sum_end);
-		 		if (!$result)
-		 		{
 
-		 		}
-		 		else
+		 		if ($result)
 		 		{
-		 			echo "<script>alert('设置成功');</script>";
+		 		    //初始化user表
+		 			$UserMapper = new Application_Model_UserMapper();
+		 			$recover = $UserMapper->recover();
+
+		 			if($recover)
+		 			{
+		 			    //更新class表
+		 				$ClassMapper = new Application_Model_ClassMapper();
+		 				$refresh = $ClassMapper->refresh($periodnum);
+		 				if ($refresh)
+		 				{
+		 					echo "<script>alert('设置成功');</script>";
+		 				}
+		 			}
 		 		}
 		 	}
 		 	else
@@ -489,7 +613,8 @@ class AdminController extends Zend_Controller_Action
             $departMapper = new Application_Model_DepartmentMapper();
             $depart = $departMapper->findAlldept();
             $this->view->depart = $depart;
-            if ($_GET)
+            $this->view->alert = "可按上面条件查询各班级情况";
+            if (isset($_GET['periodnum'])&&isset($_GET['xiaoqu'])&&isset($_GET['xueyuan'])&&isset($_GET['banji']))
             {
             	$periodnum = strip_tags(trim($_GET['periodnum']));
             	$campus = strip_tags(trim($_GET['xiaoqu']));
@@ -497,33 +622,65 @@ class AdminController extends Zend_Controller_Action
             	$classtype = strip_tags(trim($_GET['banji']));
             	if (!empty($periodnum) && !empty($campus) && !empty($depid) && !empty($classtype))
             	{
+            		$departMapper = new Application_Model_DepartmentMapper();
+            		$depart = $departMapper->findDept($depid);
+            		$depname = $depart[0]['depname'];
+
             		//查询班级ID
             		$campus = $campus."校区";
             		$ClassMapper = new Application_Model_ClassMapper();
             		$classinfo = $ClassMapper->getClassid($classtype,$periodnum,$depid,$campus);
-            		$classid = $classinfo[0]['classid'];
+            		if ($classinfo)
+            		{
+            			$classid = $classinfo[0]['classid'];
+            			// $this->view->classteacher = $classinfo[0]['teachername'];
 
-            		// 获取党校总结数据
-            		$ClassummaryMapper = new Application_Model_ClassummaryMapper();
-            		$dxInfo  = $ClassummaryMapper->dxzjdata($classid);
-            		$this->view->xysz    = $dxInfo['xysz'];
-            		$this->view->study   = $dxInfo['study'];
-            		$this->view->taolun  = $dxInfo['taolun'];
-            		$this->view->shijian = $dxInfo['shijian'];
+            			// 获取党校总结数据
+            			$ClassummaryMapper = new Application_Model_ClassummaryMapper();
+            			$dxInfo  = $ClassummaryMapper->dxzjdata($classid);
+            			$this->view->xysz    = $dxInfo['xysz'];
+            			$this->view->study   = $dxInfo['study'];
+            			$this->view->taolun  = $dxInfo['taolun'];
+            			$this->view->shijian = $dxInfo['shijian'];
 
-            		//获取学员信息
-            		$StudentMapper = new Application_Model_StudentMapper();
-            		$order = "stno DESC";
-            		$where = array('classid' => $classid);
-            		$limit = null;
-            		$arrList = $StudentMapper->getStuinfo($where,$order,$limit);
+            			$StuclassMapper = new Application_Model_StuclassMapper();
+            			$stuclass = $StuclassMapper->getStnoByclass($classid);
+            			$stno = array();
+            			$stno = $stuclass;
+            			$StudentMapper = new Application_Model_StudentMapper();
+            			$order = "stno DESC";
+            			$limit = null;
+            			if (!empty($stno))
+            			{
+            				$arrList = $StudentMapper->getStuinfo($stno,$order,$limit);
+            				if ($arrList)
+            				{
+            					$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
+            					$paginator_studentinfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
+            					$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的学生信息数目
+            					$paginator_studentinfo->setCurrentPageNumber($page); //设置第一页显示
+            					$paginator_studentinfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
+            					$this->view->paginator_studentinfo = $paginator_studentinfo;
+            					$this->view->alert = "第".$periodnum."期&nbsp;".$campus."&nbsp;".$depname."&nbsp;".$classtype.'<span style="display:inline-block;width:360px;"></span>双击可修改成绩';
 
-            		$num=5; $page=1; //设置每一页显示学生信息数目 //设置第一页显示
-            		$paginator_studentinfo = new Zend_Paginator(new Zend_Paginator_Adapter_Array($arrList)); //调用分页
-            		$paginator_studentinfo->setItemCountPerPage($num); //设置每一页显示的学生信息数目
-            		$paginator_studentinfo->setCurrentPageNumber($page); //设置第一页显示
-            		$paginator_studentinfo->setCurrentPageNumber($this->_getParam('page')); //从url获取需要显示的页码
-            		$this->view->paginator_studentinfo = $paginator_studentinfo;
+            					//获取班级优秀学员
+            					$goodstudent = $StudentMapper->Showgood($stno);
+            					$this->view->goodstuName = $goodstudent;
+            				}
+            				else
+            				{
+            					$this->view->alert = "您查找的班级为：第".$periodnum."期&nbsp;".$campus."&nbsp;".$depname."&nbsp;".$classtype."<br>该班级暂无数据";
+            				}
+            		    }
+            		    else
+            		    {
+            		    	$this->view->alert = "您查找的班级为：第".$periodnum."期&nbsp;".$campus."&nbsp;".$depname."&nbsp;".$classtype."<br>该班级暂无数据";
+            		    }
+            		}
+            		else
+            		{
+            			$this->view->alert = "您查找的班级为：第".$periodnum."期&nbsp;".$campus."&nbsp;".$depname."&nbsp;".$classtype."<br>请检查查询条件，我们没有找到这个班级的信息";
+            		}
             	}
             }
 	 	}
@@ -533,6 +690,33 @@ class AdminController extends Zend_Controller_Action
 	 		exit;
 	 	}
 	 }
+
+	 /**
+	  * 超级管理员修改学员成绩控制
+	  * @return [type] [description]
+	  */
+	 public function changescoreAction()
+	 {
+	 	if (isset($_POST['stno'])&&isset($_POST['score']))
+	 	{
+            $stno = strip_tags(trim($_POST['stno']));
+            $score = strip_tags(trim($_POST['score']));
+            $ScoreMapper = new Application_Model_ScoreMapper();
+            $stuScore = $ScoreMapper->changeScore($stno,$score);
+            if ($stuScore)
+            {
+            	$this->view->msg = 1;
+            }
+            else
+            {
+            	$this->view->msg = 10;
+            }
+        }
+        else
+        {
+        	$this->view->msg = 0;
+        }
+     }
 	 /**
 	  * 超级管理员“题目设置”控制
 	  * @return [type] [description]
@@ -724,25 +908,27 @@ class AdminController extends Zend_Controller_Action
 		$session = new Zend_Session_Namespace('user');
 	 	if (isset($session->depid) && $session->depid == 1)
 	 	{
-	 		$qetitle = $_POST['timu'];
-	 		$ansA = $_POST['ansA'];
-	 		$ansB = $_POST['ansB'];
-	 		$ansC = $_POST['ansC'];
-	 		$ansD = $_POST['ansD'];
-	 		$ansY = $_POST['rightAns'];
+	 		if (isset($_POST['timu'])&&isset($_POST['ansA'])&&isset($_POST['ansB'])&&isset($_POST['ansC'])&&isset($_POST['ansD'])&&isset($_POST['rightAns']))
+	 		{
+	 			$qetitle = $_POST['timu'];
+	 			$ansA = '（A）'.trim($_POST['ansA']);
+	 			$ansB = '（B）'.trim($_POST['ansB']);
+	 			$ansC = '（C）'.trim($_POST['ansC']);
+	 			$ansD = '（D）'.trim($_POST['ansD']);
+	 			$ansY = '（'.trim($_POST['rightAns']).'）';
 
-	 		$queupdateMapper = new Application_Model_QueupdateMapper();
-	 		$result = $queupdateMapper->addQuestion($qetitle,$ansA,$ansB,$ansC,$ansD,$ansY);
-	 		echo $result;
-	 		exit();
+	 			$queupdateMapper = new Application_Model_QueupdateMapper();
+	 			$result = $queupdateMapper->addQuestion($qetitle,$ansA,$ansB,$ansC,$ansD,$ansY);
+	 			echo $result;
+	 			exit();
+	 		}
 	 	}
 	 	else
 	 	{
 	 		echo "<script>alert('无权访问');location.href='/login';</script>";
 	 		exit;
 	 	}
-		
-	}
+	 }
 
 	/**
 	* 更新题目

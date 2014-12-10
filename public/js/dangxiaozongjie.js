@@ -86,6 +86,18 @@ $('button.youxiu').click(function(){
                 	}
             	}
         	});
+    $.ajax({
+                url:'/admin/showgood',
+                type:'POST',
+                data:{
+                    stno:stno
+                },
+                success:function(msg){
+                    if (msg){
+                        $('#st-yx').html(msg);
+                    };
+                }
+            });
 });
 /*结业按钮变化*/
 $('button.biye').click(function(){

@@ -70,7 +70,6 @@
 						</form>
 						";
 					}
-				}
 	         ?>
 	         <div class="ans-warn">
 	         	<span id="ansTest">&nbsp;</span>
@@ -79,10 +78,12 @@
 				
 			</div>
 			<ul class="button">
-				<?php echo $this->paginationControl($this->paginator_choose,
+				<?php 
+				echo $this->paginationControl($this->paginator_choose,
                 'Elastic',//页码样式 
                 'index/pagination_control3.phtml'//页码模板
                 );
+			}
               ?>
 				<!-- 
 				<li><input type="button" value="下一题"></li> -->

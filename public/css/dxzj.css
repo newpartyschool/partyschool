@@ -1,14 +1,14 @@
-.main-content table th{
+.main-content form table th{
 	line-height: 3;
 }
-.main-content table th img{
+.main-content form table th img{
 	width: 30px;
 	height: 30px;
-}
-.main-content .btn-submit{
+}	
+.main-content form .btn-submit{
 	width: 8%;
 }
-.main-content table td .check-change{
+.main-content form table td .check-change{
 	width: 21px;
 	height: 21px;
 	display: inline-block;
@@ -21,6 +21,24 @@
 	text-align: center;
 	margin-bottom: 20px;
 }
-.main-container  .st-name{
+.main-container form .st-name{
 	width: 30%;
+}
+.main-container .table td{
+	line-height:40px;
+}
+#addForm{
+	width:400px;
+
+}
+#addForm label{
+	line-height: 30px;
+	margin-right: 50px;
+}
+#addForm input[type=radio]{
+	margin-right: 10px;
+	line-height: 30px;
+}
+.btn-danger{
+	margin-left: 40px;
 }

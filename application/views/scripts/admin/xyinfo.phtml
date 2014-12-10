@@ -49,17 +49,19 @@
       <div class="main-title">
         <form method="get" action="">
           <span>第</span>
-          <input type="text" class="form-control classdate" name="periodnum">
+          <input type="number" class="form-control classdate" name="periodnum" placeholder="期数">
           <span>期</span>
           <!-- 校区 -->
           <label for="xiaoqu">校区</label>
           <select name="xiaoqu" id="xiaoqu" class="form-control">
+            <option disabled selected style="display:none;">--校区--</option>
             <option>屯溪路</option>
             <option>翡翠湖</option>
           </select>
           <!-- 学院 -->
           <label for="xueyuan">学院</label>
           <select name="xueyuan" id="xueyuan" class="form-control">
+            <option disabled selected style="display:none;">--学院--</option>
             <?php
              for ($i=1; $i < 20; $i++)
              {
@@ -70,6 +72,7 @@
           <!-- 班级 -->
           <label for="banji">班级</label>
           <select name="banji" id="banji" class="form-control">
+            <option disabled selected style="display:none;">-班级类别-</option>
             <option>党员班</option>
             <option>积极分子班</option>
           </select>
@@ -83,6 +86,9 @@
       ?>
       <div class="main-content">
         <div class="contentdiv">
+        <?php
+          echo $this->alert;
+        ?>
           <table class="table table-hover">
             <tr>
               <th>#</th>
@@ -102,7 +108,7 @@
                   $stuname = $stuList['name'];
                   $stuphone = $stuList['phonenum'];
                   $sex = $stuList['sex'];
-                  $score = $stuList['grade'];
+                  $score = $stuList['partygrade'];
                   if ($score == '')
                   {
                     $score = "暂无成绩";
@@ -125,7 +131,7 @@
                   echo "<td>{$sex}</td>";
                   echo '<td><button class="btn btn-default youxiu" title="点击可修改状态">'.$isgood.'</button></td>';
                   echo '<td><button class="btn btn-default biye" title="点击可修改状态">'.$isgraduate.'</button></td>';
-                  echo "<td>{$score}</td>";
+                  echo "<td><input type='number' class='form-control grade' value={$score} readonly ondblclick='this.readOnly=false' onblur='this.readOnly=true' title='双击可修改'></td>";
                   echo '<td><img class="del-icon" src="/images/2.jpg"></td>';
                   echo "</tr>";
                 }
@@ -147,12 +153,22 @@
         </div>
         <div class="banzhuren">
           <span>班主任：</span>
-          <span id="name-bzr">班主任姓名</span>
+          <span id="name-bzr"><?php echo $this->classteacher;?></span>
         </div>
         <!-- 优秀学员 -->
         <div class="students-yx info">
           <label for="st-yx">优秀学员姓名（人数占所带学生总人数10%）</label>
-          <textarea name="st-yx" id="st-yx" class="form-control" disabled>自动显示优秀学员姓名</textarea>
+          <textarea name="st-yx" id="st-yx" class="form-control" disabled>
+          <?php 
+            if ($this->goodstuName)
+            {
+              foreach ($this->goodstuName as $stu)
+              {
+                echo $stu['name'].'&nbsp;&nbsp;';
+              }
+            }
+          ?>
+          </textarea>
         </div>
         <!-- 学员素质 -->
         <div class="info">
@@ -191,7 +207,7 @@
     ?>
       <div class="main-content">
         <div class="tishi">
-          可按上面条件查询各班级情况
+          <?php echo $this->alert; ?>
         </div>
       </div>
     <?php
